@@ -1,25 +1,61 @@
-name: Deploy NextJs to GitHub Pages
+name: Deploy Next.js to GitHub Pages
 on:
   workflow_dispatch:
   push:
-    branches: [ master ]
+    branches: [ main ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 permissions:
   contents: read
   pages: write
   id-token: write
+
 concurrency:
   group: "pages"
   cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3 # https://github.com/actions/checkout
-      - uses: actions/configure-pages@v3 # https://github.com/actions/configure-pages
-      - uses: actions/upload-pages-artifact@v1 # https://github.com/actions/upload-pages-artifact
+      - id: detect-package-manager
+        run: |
+          if [ -f "${{ github.workspace }}/yarn.lock" ]; then
+            echo "manager=yarn" >> $GITHUB_OUTPUT
+            echo "command=install" >> $GITHUB_OUTPUT
+            echo "runner=yarn" >> $GITHUB_OUTPUT
+            exit 0
+          elif [ -f "${{ github.workspace }}/package.json" ]; then
+            echo "manager=npm" >> $GITHUB_OUTPUT
+            echo "command=ci" >> $GITHUB_OUTPUT
+            echo "runner=npx --no-install" >> $GITHUB_OUTPUT
+            exit 0
+          else
+            echo "Unable to determine package manager"
+            exit 1
+          fi
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: ${{ steps.detect-package-manager.outputs.manager }}
+      - uses: actions/configure-pages@v3
+        with:
+          static_site_generator: next
+      - uses: actions/cache@v3
+        with:
+          path: |
+            .next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-${{ hashFiles('**.[jt]s', '**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json', '**/yarn.lock') }}-
+      - run: ${{ steps.detect-package-manager.outputs.manager }} ${{ steps.detect-package-manager.outputs.command }}
+      - run: ${{ steps.detect-package-manager.outputs.runner }} next build
+      - run: ${{ steps.detect-package-manager.outputs.runner }} next export
+      - uses: actions/upload-pages-artifact@v1
+        with:
+          path: ./out
   deploy:
     needs: build
     environment:
@@ -28,4 +64,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v2

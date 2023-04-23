@@ -2,6 +2,8 @@
 const nextConfig = {
   reactStrictMode: false,
   output: 'standalone',
+  images: { unoptimized: true },
+  experimental: { images: { unoptimized: true } },
 };
 
 module.exports = nextConfig;

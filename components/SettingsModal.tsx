@@ -19,10 +19,7 @@ import ISO6391 from "iso-639-1";
 import { useForm } from "@mantine/form";
 import { IconBraces, IconMicrophone, IconSettings } from "@tabler/icons-react";
 import { useEffect, useState } from "react";
-import * as ElevenLabs from "@/stores/ElevenLabs";
 import { refreshModels, updateSettingsForm } from "@/stores/ChatActions";
-import * as Azure from "@/stores/AzureSDK";
-import { azureCandidateLanguages } from "./azureLangs";
 
 function getLanguages() {
   const languageCodes = ISO6391.getAllCodes();
@@ -33,37 +30,13 @@ function getLanguages() {
 }
 
 export default function SettingsModal({ close }: { close: () => void }) {
-  const modelChoicesChat =
-    useChatStore((state) => state.modelChoicesChat) || [];
-  const [voices11Labs, setVoices11Labs] = useState<ElevenLabs.Voice[]>([]);
-  const [voicesAzure, setVoicesAzure] = useState<Azure.Voice[]>([]);
-  const [voiceStylesAzure, setVoiceStylesAzure] = useState<string[]>([]);
-
-  const apiKey11Labs = useChatStore((state) => state.apiKey11Labs);
-  const apiKeyAzure = useChatStore((state) => state.apiKeyAzure);
-  const apiKeyAzureRegion = useChatStore((state) => state.apiKeyAzureRegion);
+  const modelChoicesChat = useChatStore((state) => state.modelChoicesChat) || [];
   const settingsForm = useChatStore((state) => state.settingsForm);
   const defaultSettings = useChatStore((state) => state.defaultSettings);
 
   useEffect(() => {
     refreshModels();
   }, []);
-
-  useEffect(() => {
-    // Load 11Labs voices11Labs
-    async function fetchData() {
-      if (!apiKey11Labs) return;
-
-      try {
-        const voices11Labs = await ElevenLabs.getVoices(apiKey11Labs);
-        setVoices11Labs(voices11Labs);
-      } catch (error) {
-        console.error("Failed to fetch models:", error);
-      }
-    }
-
-    fetchData();
-  }, [apiKey11Labs]);
 
   const form = useForm({
     initialValues: settingsForm,
@@ -87,25 +60,6 @@ export default function SettingsModal({ close }: { close: () => void }) {
     },
   });
 
-  useEffect(() => {
-    // Load Azure voices
-    async function fetchData() {
-      if (!apiKeyAzure || !apiKeyAzureRegion) return;
-      const voices = await Azure.getVoices(apiKeyAzure, apiKeyAzureRegion);
-      if (!voices) return;
-      setVoicesAzure(voices);
-    }
-
-    fetchData();
-  }, [apiKeyAzure, apiKeyAzureRegion]);
-
-  useEffect(() => {
-    setVoiceStylesAzure(
-      voicesAzure.find(
-        (voice) => voice.shortName === form.values.voice_id_azure
-      )?.styleList || []
-    );
-  }, [voicesAzure, form.values.voice_id_azure]);
 
   const languages = getLanguages();
   const langDisplayToCode = languages.reduce((acc, cur) => {
@@ -128,15 +82,6 @@ export default function SettingsModal({ close }: { close: () => void }) {
               icon={<IconSettings size={px("0.8rem")} />}
             >
               OpenAI
-            </Tabs.Tab>
-            <Tabs.Tab
-              value="azure"
-              icon={<IconMicrophone size={px("0.8rem")} />}
-            >
-              Azure
-            </Tabs.Tab>
-            <Tabs.Tab value="11labs" icon={<IconBraces size={px("0.8rem")} />}>
-              ElevenLabs
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="openai" pt="xs">
@@ -267,120 +212,7 @@ export default function SettingsModal({ close }: { close: () => void }) {
                   />
                 </Accordion.Panel>
               </Accordion.Item>
-              <Accordion.Item value="whisper">
-                <Accordion.Control>Whisper (Speech to Text)</Accordion.Control>
-                <Accordion.Panel>
-                  <Switch
-                    pb="md"
-                    checked={form.values.auto_detect_language}
-                    label="Auto-detect language"
-                    onChange={(event) => {
-                      form.setFieldValue(
-                        "auto_detect_language",
-                        event.currentTarget.checked
-                      );
-                    }}
-                  />
-
-                  <Autocomplete
-                    disabled={form.values.auto_detect_language}
-                    label="Spoken language (choosing gives better accuracy)"
-                    value={form.values.spoken_language}
-                    onChange={(value) => {
-                      form.setFieldValue("spoken_language", value!);
-                      form.setFieldValue(
-                        "spoken_language_code",
-                        langDisplayToCode[value!]
-                      );
-                    }}
-                    data={getLanguages().map((lang) => lang.label)}
-                  />
-                </Accordion.Panel>
-              </Accordion.Item>
             </Accordion>
-          </Tabs.Panel>
-          <Tabs.Panel value="azure" pt="xs">
-            <Title pt="xs" pb="md" order={4}>
-              Speech to Text
-            </Title>
-            <Switch
-              pb="md"
-              checked={form.values.auto_detect_language_azure}
-              label="Auto-detect language"
-              onChange={(event) => {
-                form.setFieldValue(
-                  "auto_detect_language_azure",
-                  event.currentTarget.checked
-                );
-              }}
-            />
-            <Autocomplete
-              disabled={form.values.auto_detect_language_azure}
-              label="Spoken language (choosing gives better accuracy)"
-              value={form.values.spoken_language_azure}
-              onChange={(value) => {
-                const key = Object.entries(azureCandidateLanguages).find(
-                  ([, v]) => v === value
-                );
-                if (key) {
-                  form.setFieldValue("spoken_language_code_azure", key[0]);
-                }
-
-                form.setFieldValue("spoken_language_azure", value!);
-              }}
-              data={Object.values(azureCandidateLanguages)}
-            />
-            <NumberInput
-              label="Message submit debounce (milliseconds)"
-              value={form.values.submit_debounce_ms}
-              onChange={(value) => {
-                if (typeof value === "number") {
-                  form.setFieldValue("submit_debounce_ms", value);
-                }
-              }}
-            />
-            <Title pt="md" pb="sm" order={4}>
-              Text to Speech
-            </Title>
-            <Autocomplete
-              label="Voice"
-              placeholder="Select a voice"
-              value={form.values.voice_id_azure}
-              onChange={(value) => {
-                setVoiceStylesAzure(
-                  voicesAzure.find((voice) => voice.shortName === value)
-                    ?.styleList || []
-                );
-                form.setFieldValue("voice_id_azure", value!);
-              }}
-              data={voicesAzure.map((voice) => ({
-                label: voice.shortName,
-                value: voice.shortName,
-              }))}
-            ></Autocomplete>
-            <Select
-              label="Voice style"
-              disabled={voiceStylesAzure.length === 0}
-              placeholder="Select a voice style"
-              value={form.values.spoken_language_style}
-              onChange={(value) =>
-                form.setFieldValue("spoken_language_style", value!)
-              }
-              data={voiceStylesAzure}
-            ></Select>
-          </Tabs.Panel>
-          <Tabs.Panel value="11labs" pt="xs">
-            <Select
-              required
-              label="Voice"
-              placeholder="Select a voice"
-              value={form.values.voice_id}
-              onChange={(value) => form.setFieldValue("voice_id", value!)}
-              data={voices11Labs.map((voice) => ({
-                label: voice.name,
-                value: voice.voice_id,
-              }))}
-            ></Select>
           </Tabs.Panel>
           <Group position="apart" mt="lg">
             <Button

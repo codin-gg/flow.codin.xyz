@@ -15,7 +15,6 @@ import Nav from "@/components/Nav";
 import { useEffect, useState } from "react";
 import UIController from "@/components/UIController";
 import { setColorScheme } from "@/stores/ChatActions";
-import AudioPlayer from "@/components/AudioPlayer";
 
 export default function App(props: AppProps) {
   const { Component, pageProps } = props;
@@ -29,7 +28,6 @@ export default function App(props: AppProps) {
   };
 
   const apiKey = useChatStore((state) => state.apiKey);
-  const playerMode = useChatStore((state) => state.playerMode);
 
   const [isHydrated, setIsHydrated] = useState(false);
 
@@ -112,7 +110,6 @@ export default function App(props: AppProps) {
 
               {apiKey && <UIController />}
             </div>
-            {playerMode && <AudioPlayer />}
           </AppShell>
         </MantineProvider>
       </ColorSchemeProvider>

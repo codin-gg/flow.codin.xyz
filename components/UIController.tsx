@@ -35,14 +35,22 @@ const styles = createStyles((theme: MantineTheme) => ({
   },
 }));
 
+const ChatInput = () => {
+  const { classes } = styles();
+  return (
+    <div className={classes.textAreaContainer}>
+      <ChatTextInput className={classes.textArea} />
+    </div>
+  );
+};
+
+
 export default function UIController() {
   const { classes } = styles();
 
   return (
     <div className={classes.container}>
-      <div className={classes.textAreaContainer}>
-        <ChatTextInput className={classes.textArea} />
-      </div>
+      <ChatInput />
     </div>
   );
 }

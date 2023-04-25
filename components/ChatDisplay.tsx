@@ -7,7 +7,6 @@ import {
   px,
 } from "@mantine/core";
 import { useChatStore } from "@/stores/ChatStore";
-import NewChat from "./NewChat";
 import MuHeader from "./MuHeader";
 
 import ChatMessage from "./ChatMessage";
@@ -121,7 +120,6 @@ const ChatDisplay = () => {
 
   const activeChat = chats.find((chat) => chat.id === activeChatId);
 
-  const pushToTalkMode = useChatStore((state) => state.pushToTalkMode);
   const lastMessage = activeChat?.messages[activeChat.messages.length - 1];
 
   const scrolledToBottom = () => {
@@ -161,12 +159,9 @@ const ChatDisplay = () => {
   return (
     <div
       className={classes.container}
-      style={{ paddingBottom: pushToTalkMode ? "7em" : "5em" }}
     >
       <div className={classes.chatContainer}>
         <MuHeader />
-
-        {!activeChatId && <NewChat />}
         {activeChat?.messages.map((message, idx) => (
           <ChatMessage key={message.id} message={message} />
         ))}

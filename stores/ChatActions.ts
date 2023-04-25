@@ -84,9 +84,6 @@ export const setColorScheme = (scheme: "light" | "dark") =>
 
 export const setApiKey = (key: string) => set((state) => ({ apiKey: key }));
 
-export const setApiKey11Labs = (key: string) =>
-  set((state) => ({ apiKey11Labs: key }));
-
 export const setApiState = (apiState: APIState) =>
   set((state) => ({ apiState }));
 
@@ -116,12 +113,6 @@ export const setChosenCharacter = (name: string) =>
 export const setNavOpened = (navOpened: boolean) =>
   set((state) => ({ navOpened }));
 
-export const setPushToTalkMode = (pushToTalkMode: boolean) =>
-  set((state) => ({ pushToTalkMode }));
-
-export const setPlayerMode = (playerMode: boolean) => {
-  set((state) => ({ playerMode }));
-};
 
 export const setEditingMessage = (editingMessage: Message | undefined) =>
   set((state) => ({ editingMessage }));

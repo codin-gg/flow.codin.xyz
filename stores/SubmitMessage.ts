@@ -111,7 +111,6 @@ export const submitMessage = async (message: Message) => {
     abortController,
     (content) => {
       set((state) => ({
-        ttsText: (state.ttsText || "") + content,
         chats: updateChatMessages(state.chats, chat.id, (messages) => {
           const assistantMessage = messages.find(
             (m) => m.id === assistantMsgId

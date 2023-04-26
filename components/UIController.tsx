@@ -22,12 +22,6 @@ const styles = createStyles((theme: MantineTheme) => ({
     paddingLeft: 8,
     paddingRight: 8,
   },
-  playerControls: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    minHeight: "72px",
-  },
   textAreaContainer: {
     display: "flex",
     flexGrow: 1,
@@ -39,30 +33,16 @@ const styles = createStyles((theme: MantineTheme) => ({
   recorderButton: {
     width: "72px",
   },
-  recorderControls: {
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "flex-end",
-    minHeight: "72px",
-  },
 }));
-
-const ChatInput = () => {
-  const { classes } = styles();
-  return (
-    <div className={classes.textAreaContainer}>
-      <ChatTextInput className={classes.textArea} />
-    </div>
-  );
-};
-
 
 export default function UIController() {
   const { classes } = styles();
 
   return (
     <div className={classes.container}>
-      <ChatInput />
+      <div className={classes.textAreaContainer}>
+        <ChatTextInput className={classes.textArea} />
+      </div>
     </div>
   );
 }

@@ -1,6 +1,6 @@
 {
-  "name": "yakgpt",
-  "version": "0.1.0",
+  "name": "flow.codin.xyz",
+  "version": "0.1.0-private.0",
   "private": true,
   "scripts": {
     "dev": "next dev",

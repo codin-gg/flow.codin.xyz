@@ -80,10 +80,10 @@ export default function Hero() {
         <div className={classes.inner}>
           <div className={classes.content}>
             <Title className={classes.title}>
-              <span className={classes.highlight}>YakGPT</span>
+            flow <span className={classes.highlight}>codin.xyz</span>
             </Title>
             <Text color="dimmed" mt="md">
-              A simple, locally running ChatGPT UI.
+              A simple, locally running, secure ChatGPT UI.
             </Text>
 
             <List

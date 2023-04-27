@@ -43,15 +43,12 @@ export default function App(props: AppProps) {
   return (
     <>
       <Head>
-        <title>YakGPT</title>
-        <meta name="description" content="A new ChatGPT UI" />
+        <title>Flow ⚡️</title>
+        <meta name="description" content="Flow ChatGPT UI" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <ColorSchemeProvider
-        colorScheme={colorScheme}
-        toggleColorScheme={toggleColorScheme}
-      >
+      <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
         <MantineProvider
           withGlobalStyles
           withNormalizeCSS

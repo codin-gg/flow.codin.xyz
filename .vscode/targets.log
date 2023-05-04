@@ -1,0 +1,240 @@
+make all --print-data-base --no-builtin-variables --no-builtin-rules --question
+# GNU Make 3.81
+# Copyright (C) 2006  Free Software Foundation, Inc.
+# This is free software; see the source for copying conditions.
+# There is NO warranty; not even for MERCHANTABILITY or FITNESS FOR A
+# PARTICULAR PURPOSE.
+
+# This program built for i386-apple-darwin11.3.0
+ 
+make: *** No rule to make target `all'.  Stop.
+
+
+# Make data base, printed on Thu May  4 13:18:28 2023
+
+# Variables
+
+# automatic
+<D = $(patsubst %/,%,$(dir $<))
+# automatic
+?F = $(notdir $?)
+# environment
+VSCODE_CRASH_REPORTER_PROCESS_TYPE = extensionHost
+# environment
+LC_CTYPE = en_US.UTF-8
+# automatic
+?D = $(patsubst %/,%,$(dir $?))
+# automatic
+@D = $(patsubst %/,%,$(dir $@))
+# automatic
+@F = $(notdir $@)
+# makefile
+CURDIR := /Users/ivoputzer/github/flow.codin.xyz
+# makefile
+SHELL = /bin/sh
+# environment
+VSCODE_NLS_CONFIG = {"locale":"en-gb","osLocale":"en-it","availableLanguages":{},"_languagePackSupport":true}
+# environment
+_ = /usr/bin/make
+# makefile
+MAKEFILE_LIST := 
+# environment
+__CFBundleIdentifier = com.microsoft.VSCode
+# environment
+FNM_NODE_DIST_MIRROR = https://nodejs.org/dist
+# environment
+VSCODE_CWD = /
+# environment
+PATH = /usr/local/bin:/usr/local/sbin:/var/folders/pq/j2wbw7vd50g120fhwkdgc1jr0000gn/T/fnm_multishell_867_1683199079485/bin:/usr/local/opt/ruby/bin:/usr/local/bin:/System/Cryptexes/App/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/local/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/bin:/var/run/com.apple.security.cryptexd/codex.system/bootstrap/usr/appleinternal/bin
+# environment
+LSCOLORS = ExGxFxdxCxDxDxhbadExEx
+# environment
+FNM_LOGLEVEL = info
+# environment
+LaunchInstanceID = 748BE975-93C0-465E-9324-6BC73874AE08
+# environment
+ELECTRON_RUN_AS_NODE = 1
+# default
+.FEATURES := target-specific order-only second-expansion else-if archives jobserver check-symlink
+# environment
+SSH_AUTH_SOCK = /private/tmp/com.apple.launchd.1z6JLXYMwO/Listeners
+# automatic
+%F = $(notdir $%)
+# environment
+PWD = /Users/ivoputzer/github/flow.codin.xyz
+# environment
+ORIGINAL_XDG_CURRENT_DESKTOP = undefined
+# environment
+VSCODE_AMD_ENTRYPOINT = vs/workbench/api/node/extensionHostProcess
+# environment
+HOME = /Users/ivoputzer
+# default
+MAKEFILEPATH = $(shell /usr/bin/xcode-select -print-path 2>/dev/null || echo /Developer)/Makefiles
+# environment
+VSCODE_CODE_CACHE_PATH = /Users/ivoputzer/Library/Application Support/Code/CachedData/704ed70d4fd1c6bd6342c436f1ede30d1cff4710
+# environment
+FNM_MULTISHELL_PATH = /var/folders/pq/j2wbw7vd50g120fhwkdgc1jr0000gn/T/fnm_multishell_867_1683199079485
+# environment
+LOGNAME = ivoputzer
+# environment
+APPLICATION_INSIGHTS_NO_DIAGNOSTIC_CHANNEL = true
+# environment
+VSCODE_HANDLES_UNCAUGHT_ERRORS = true
+# automatic
+^D = $(patsubst %/,%,$(dir $^))
+# environment
+XPC_FLAGS = 0x0
+# default
+MAKE = $(MAKE_COMMAND)
+# default
+MAKECMDGOALS := all
+# environment
+SHLVL = 2
+# default
+MAKE_VERSION := 3.81
+# environment
+USER = ivoputzer
+# makefile
+.DEFAULT_GOAL := 
+# automatic
+%D = $(patsubst %/,%,$(dir $%))
+# default
+MAKE_COMMAND := /Library/Developer/CommandLineTools/usr/bin/make
+# default
+.VARIABLES := 
+# environment
+TMPDIR = /var/folders/pq/j2wbw7vd50g120fhwkdgc1jr0000gn/T/
+# automatic
+*F = $(notdir $*)
+# environment
+VSCODE_IPC_HOOK = /Users/ivoputzer/Library/Application Support/Code/1.77-main.sock
+# environment
+MallocNanoZone = 0
+# makefile
+MAKEFLAGS = Rrqp
+# environment
+MFLAGS = -Rrqp
+# automatic
+*D = $(patsubst %/,%,$(dir $*))
+# environment
+XPC_SERVICE_NAME = application.com.microsoft.VSCode.119085976.119085982
+# automatic
++D = $(patsubst %/,%,$(dir $+))
+# automatic
++F = $(notdir $+)
+# environment
+__CF_USER_TEXT_ENCODING = 0x1F5:0x0:0x0
+# environment
+COMMAND_MODE = unix2003
+# default
+MAKEFILES := 
+# automatic
+<F = $(notdir $<)
+# environment
+EDITOR = subl -w
+# environment
+FNM_DIR = /Users/ivoputzer/.fnm
+# environment
+LC_ALL = C
+# environment
+SECURITYSESSIONID = 186a4
+# automatic
+^F = $(notdir $^)
+# default
+SUFFIXES := 
+# default
+.INCLUDE_DIRS = /usr/local/include
+# environment
+MAKELEVEL := 0
+# environment
+CLICOLOR = YES
+# environment
+LANG = C
+# environment
+VSCODE_PID = 692
+# variable set hash-table stats:
+# Load=69/1024=7%, Rehash=0, Collisions=2/90=2%
+
+# Pattern-specific Variable Values
+
+# No pattern-specific variable values.
+
+# Directories
+
+# . (device 16777224, inode 120940066): 27 files, no impossibilities.
+
+# 27 files, no impossibilities in 1 directories.
+
+# Implicit Rules
+
+# No implicit rules.
+
+# Files
+
+# Not a target:
+all:
+#  Command-line target.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has not been updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.SUFFIXES:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+Makefile:
+#  A default, MAKEFILES, or -include/sinclude makefile.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+makefile:
+#  A default, MAKEFILES, or -include/sinclude makefile.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# Not a target:
+.DEFAULT:
+#  Implicit rule search has not been done.
+#  Modification time never checked.
+#  File has not been updated.
+
+# Not a target:
+GNUmakefile:
+#  A default, MAKEFILES, or -include/sinclude makefile.
+#  Implicit rule search has been done.
+#  File does not exist.
+#  File has been updated.
+#  Failed to be updated.
+# variable set hash-table stats:
+# Load=0/32=0%, Rehash=0, Collisions=0/0=0%
+
+# files hash-table stats:
+# Load=6/1024=1%, Rehash=0, Collisions=0/17=0%
+# VPATH Search Paths
+
+# No `vpath' search paths.
+
+# No general (`VPATH' variable) search path.
+
+# # of strings in strcache: 0
+# # of strcache buffers: 0
+# strcache size: total = 0 / max = 0 / min = 4096 / avg = 0
+# strcache free: total = 0 / max = 0 / min = 4096 / avg = 0
+
+# Finished Make data base on Thu May  4 13:18:28 2023
+
+ 

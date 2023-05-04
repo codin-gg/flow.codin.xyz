@@ -1,0 +1,6 @@
+make --dry-run --always-make --keep-going --print-directory
+make: Entering directory `/Users/ivoputzer/github/flow.codin.xyz'
+make: Leaving directory `/Users/ivoputzer/github/flow.codin.xyz'
+ 
+make: *** No targets specified and no makefile found.  Stop.
+

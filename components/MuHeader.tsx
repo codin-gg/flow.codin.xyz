@@ -107,29 +107,25 @@ export default function MuHeader({ children }: any) {
   return (
     <Header height={36} mb={120} sx={{ zIndex: 1002 }}>
       <Container className={classes.inner}>
+
         <MediaQuery largerThan="sm" styles={{ display: "none", width: 0 }}>
-          <Burger
-            opened={navOpened}
-            onClick={() => setNavOpened(!navOpened)}
-            size="sm"
-            color={theme.colors.gray[6]}
-          />
+          <Burger opened={navOpened} onClick={() => setNavOpened(!navOpened)} size="sm" color={theme.colors.gray[6]} />
         </MediaQuery>
-        <MediaQuery
-          largerThan="sm"
-          styles={{ width: "100%", justifyContent: "center" }}
-        >
+
+        <MediaQuery largerThan="sm" styles={{ width: "100%", justifyContent: "center" }}>
           <Group spacing={5} className={classes.social} noWrap c="dimmed">
-            {activeChat?.chosenCharacter ? (
-              <>
-                <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-                  <Text size="sm">{activeChat?.chosenCharacter}</Text>
-                </MediaQuery>
-                <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-                  <Divider size="xs" orientation="vertical" />
-                </MediaQuery>
-              </>
-            ) : null}
+            {
+            activeChat?.chosenCharacter
+              ? (<>
+                  <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+                    <Text size="sm">{activeChat?.chosenCharacter}</Text>
+                  </MediaQuery>
+                  <MediaQuery smallerThan="md" styles={{ display: "none" }}>
+                    <Divider size="xs" orientation="vertical" />
+                  </MediaQuery>
+                </>)
+              : null
+            }
             <Text size="sm">{modelInfo.displayName}</Text>
             {isKnownModel && (
               <>
@@ -141,7 +137,6 @@ export default function MuHeader({ children }: any) {
             )}
           </Group>
         </MediaQuery>
-
         <Group spacing={0} className={classes.social} position="right" noWrap>
           <MediaQuery largerThan="sm" styles={{ display: "none", width: 0 }}>
             <ActionIcon
@@ -153,21 +148,7 @@ export default function MuHeader({ children }: any) {
               }}
               size="lg"
             >
-              <IconPlus
-                size={px("1.5rem")}
-                stroke={1.5}
-                color={theme.colors.gray[6]}
-              />
-            </ActionIcon>
-          </MediaQuery>
-          <MediaQuery smallerThan="sm" styles={{ display: "none", width: 0 }}>
-            <ActionIcon
-              sx={{ opacity: 0.8 }}
-              onClick={() => {
-                window.open("https://github.com/yakGPT/yakGPT", "_blank");
-              }}
-            >
-              <IconBrandGithub size={px("1.5rem")} />
+              <IconPlus size={px("1.5rem")} stroke={1.5} color={theme.colors.gray[6]} />
             </ActionIcon>
           </MediaQuery>
         </Group>

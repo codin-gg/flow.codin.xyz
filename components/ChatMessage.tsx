@@ -8,18 +8,15 @@ import {
   px,
 } from "@mantine/core";
 
-import { useChatStore } from "@/stores/ChatStore";
-import { IconEdit, IconRepeat, IconSettings, IconX } from "@tabler/icons-react";
+import { IconEdit, IconRepeat, IconSettings, IconX, IconPlaylist, IconPlaylistOff} from "@tabler/icons-react";
 import MessageDisplay from "./MessageDisplay";
 
 import UserIcon from "./UserIcon";
 import AssistantIcon from "./AssistantIcon";
+
 import { Message } from "@/stores/Message";
-import {
-  delMessage,
-  regenerateAssistantMessage,
-  setEditingMessage,
-} from "@/stores/ChatActions";
+import { useSpeechSynthesis } from "react-speech-kit";
+import { delMessage,regenerateAssistantMessage,setEditingMessage } from "@/stores/ChatActions";
 
 const useStyles = createStyles((theme: MantineTheme) => ({
   container: {
@@ -138,6 +135,7 @@ const useStyles = createStyles((theme: MantineTheme) => ({
 
 export default function ChatDisplay({ message }: { message: Message }) {
   const { classes, cx } = useStyles();
+  const { cancel, speaking, speak } = useSpeechSynthesis();
 
   const handleMainAction = (message: Message) => {
     if (message.role === "assistant") {
@@ -160,7 +158,7 @@ export default function ChatDisplay({ message }: { message: Message }) {
           ? classes.userMessageContainer
           : classes.botMessageContainer
       )}
-    >
+    >{message.id}
       <div
         className={cx(
           classes.message,
@@ -207,6 +205,16 @@ export default function ChatDisplay({ message }: { message: Message }) {
               color="gray"
             >
               <IconX />
+            </ActionIcon>
+
+
+            <ActionIcon
+              className={cx(classes.actionIcon, classes.topOfMessage)}
+              onClick={() => speaking ? cancel() : speak({ text: message.content, voice: null })}
+              color={speaking ? 'red' : 'green'}
+              variant="filled"
+            >
+              {speaking ? <IconPlaylistOff size={px("1.1rem")} stroke={3} /> : <IconPlaylist size={px("1.1rem")} stroke={3} />}
             </ActionIcon>
           </div>
         </div>

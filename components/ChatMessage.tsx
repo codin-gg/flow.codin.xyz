@@ -211,7 +211,7 @@ export default function ChatDisplay({ message }: { message: Message }) {
             <ActionIcon
               className={cx(classes.actionIcon, classes.topOfMessage)}
               onClick={() => speaking ? cancel() : speak({ text: message.content, voice: null })}
-              color={speaking ? 'red' : 'green'}
+              color={speaking ? 'red' : 'blue'}
               variant="filled"
             >
               {speaking ? <IconPlaylistOff size={px("1.1rem")} stroke={3} /> : <IconPlaylist size={px("1.1rem")} stroke={3} />}

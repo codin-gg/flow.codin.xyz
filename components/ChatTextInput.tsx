@@ -8,7 +8,7 @@ import {
   Group,
   px,
 } from "@mantine/core";
-import { IconArrowRight, IconPlayerStop, IconX } from "@tabler/icons-react";
+import { IconArrowRight, IconPlayerStop, IconX, IconReload } from "@tabler/icons-react";
 import { useRouter } from "next/router";
 import { abortCurrentRequest, submitMessage } from "@/stores/SubmitMessage";
 import { addChat, setEditingMessage, update } from "@/stores/ChatActions";
@@ -72,7 +72,9 @@ export default function ChatInput({ className }: { className?: string }) {
     setValue(event.target.value);
   };
 
-  const Icon = apiState === "loading" ? IconPlayerStop : IconArrowRight;
+  const isLoading = apiState === "loading"
+
+  const Icon = isLoading ? IconPlayerStop : IconArrowRight;
 
   // Whenever editingMessage changes, update the value
   useEffect(() => {
@@ -106,10 +108,10 @@ export default function ChatInput({ className }: { className?: string }) {
       value={value}
       rightSection={
         <Group>
-          {editingMessage && (
+          { editingMessage && (
             <ActionIcon
-              size={32}
-              color={"red"}
+              size={ 32 }
+              color={ 'red' }
               variant="filled"
               onClick={() => cancelEdit()}
               sx={{
@@ -118,16 +120,21 @@ export default function ChatInput({ className }: { className?: string }) {
                 right: "36px",
               }}
             >
-              <IconX size={px("1.1rem")} stroke={1.5} />
+              <IconX size={px("1.1rem")} stroke={3} />
             </ActionIcon>
           )}
           <ActionIcon
             size={32}
-            color={apiState === "loading" ? "red" : theme.primaryColor}
+            color={ editingMessage ? 'green' : 'gray' }
+            variant={ editingMessage ? 'filled' : 'none' }
             onClick={() => doSubmit()}
             sx={{ position: "absolute", bottom: "2px", right: "2px" }}
           >
-            <Icon size={px("1.1rem")} stroke={1.5} />
+            { editingMessage && (
+              <IconReload size={px("1.1rem")} stroke={3} />
+            ) || (
+              <Icon size={px("1.1rem")} stroke={3} />
+            )}
           </ActionIcon>
         </Group>
       }

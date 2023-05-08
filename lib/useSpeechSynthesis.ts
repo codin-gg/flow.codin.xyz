@@ -1,13 +1,34 @@
 import { useEffect, useState } from 'react'
 
-export const useSpeechSynthesis = ({ onEnd = Function.prototype } = {}) => {
-  const [voices, setVoices] = useState([])
+interface SpeechSynthesisArgs {
+  onEnd?: () => void
+}
 
-  const [speaking, setSpeaking] = useState(false)
-  const [supported, setSupported] = useState(false)
+interface VoicesState {
+  voices: SpeechSynthesisVoice[]
+  supported: boolean
+  cancel: () => void
+}
 
-  const processVoices = (voiceOptions) => {
-    setVoices(voiceOptions)
+interface SpeakState {
+  speaking: boolean
+  cancel: () => void
+}
+
+interface SpeakArgs {
+  voice?: SpeechSynthesisVoice | null
+  text?: string
+  rate?: number
+  pitch?: number
+  volume?: number
+}
+
+export const useSpeechSynthesis = ({ onEnd = Function.prototype }: SpeechSynthesisArgs = {}) => {
+  const [voicesState, setVoicesState] = useState<VoicesState>({ voices: [], supported: false, cancel: () => {} })
+  const [speakState, setSpeakState] = useState<SpeakState>({ speaking: false, cancel: () => {} })
+
+  const processVoices = (voiceOptions: SpeechSynthesisVoice[]) => {
+    setVoicesState((prevState) => ({ ...prevState, voices: voiceOptions }))
   }
 
   const getVoices = () => {
@@ -15,34 +36,40 @@ export const useSpeechSynthesis = ({ onEnd = Function.prototype } = {}) => {
     let voiceOptions = window.speechSynthesis.getVoices()
     if (voiceOptions.length > 0) {
       processVoices(voiceOptions)
+      setVoicesState((prevState) => ({ ...prevState, supported: true }))
       return
     }
 
+    // why not use .addEventListener voicechanged instead?
     window.speechSynthesis.onvoiceschanged = (event) => {
-      voiceOptions = event.target.getVoices()
+      voiceOptions = event?.target?.getVoices() as SpeechSynthesisVoice[]
       processVoices(voiceOptions)
+      setVoicesState((prevState) => ({ ...prevState, supported: true }))
     }
   }
 
   const handleEnd = () => {
-    setSpeaking(false)
+    setSpeakState((prevState) => ({ ...prevState, speaking: false }))
     onEnd()
   }
 
   useEffect(() => {
     if (typeof window !== 'undefined' && window.speechSynthesis) {
-      setSupported(true)
       getVoices()
+    }
+    return () => {
+      window.speechSynthesis.cancel()
+      setSpeakState({ speaking: false, cancel: () => {} })
     }
   }, [])
 
-  const speak = (args = {}) => {
+  const speak = (args: SpeakArgs = {}) => {
     const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args
-    if (!supported) return
-    setSpeaking(true)
+    if (!voicesState.supported) return
+    setSpeakState({ speaking: true, cancel })
     // Firefox won't repeat an utterance that has been
     // spoken, so we need to create a new instance each time
-    const utterance = new window.SpeechSynthesisUtterance()
+    const utterance = new SpeechSynthesisUtterance()
     utterance.text = text
     utterance.voice = voice
     utterance.onend = handleEnd
@@ -50,27 +77,15 @@ export const useSpeechSynthesis = ({ onEnd = Function.prototype } = {}) => {
     utterance.pitch = pitch
     utterance.volume = volume
     window.speechSynthesis.speak(utterance)
-  }
-
-  const cancel = () => {
-    if (!supported) return
-    setSpeaking(false)
-    window.speechSynthesis.cancel()
+    const cancel = () => {
+      setSpeakState((prevState) => ({ ...prevState, speaking: false }))
+      window.speechSynthesis.cancel()
+    }
   }
 
   return {
-    supported,
+    ...voicesState,
+    ...speakState,
     speak,
-    speaking,
-    cancel,
-    voices
   }
 }
-
-// {
-//   supported: boolean;
-//   speak: (args?: {}) => void;
-//   speaking: boolean;
-//   cancel: () => void;
-//   voices: never[];
-// }

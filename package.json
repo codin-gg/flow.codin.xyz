@@ -25,9 +25,6 @@
     "@mantine/notifications": "^6.0.2",
     "@nem035/gpt-3-encoder": "^1.1.7",
     "@tabler/icons-react": "^2.10.0",
-    "@types/node": "18.15.3",
-    "@types/react": "18.0.28",
-    "@types/react-dom": "18.0.11",
     "axios": "^1.3.4",
     "clipboard": "^2.0.11",
     "form-data": "^4.0.0",
@@ -38,15 +35,18 @@
     "next": "13.2.4",
     "preact": "^8.5.3",
     "preact-compat": "^3.19.0",
-    "typescript": "4.9.5",
     "uuid": "^9.0.0",
     "zustand": "^4.3.6"
   },
   "devDependencies": {
+    "@types/node": "18.15.3",
+    "@types/react": "18.0.28",
+    "@types/react-dom": "18.0.11",
     "@types/lodash": "^4.14.191",
     "@types/markdown-it": "^12.2.3",
     "@types/react-speech-recognition": "^3.9.2",
     "@types/uuid": "^9.0.1",
+    "typescript": "4.9.5",
     "eslint": "^8.40.0",
     "eslint-config-ts-standard-next": "^0.4.0"
   }

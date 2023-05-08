@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react'
 
-export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
+interface SpeakArgs {
+  text?: string
+  voice?: SpeechSynthesisVoice
+  rate?: number
+  pitch?: number
+  volume?: number
+}
+
+export const useSpeechSynthesis = ({ onEnd = () => {
+  console.log('----------------------- useSpeechSynthesis [on:END] -----------------------')
+}} = {}) => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [speaking, setSpeaking] = useState(false)
   const [supported, setSupported] = useState(false)
@@ -16,7 +26,7 @@ export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
 
   const handleEnd = () => {
     setSpeaking(false)
-    setHighlight(null)
+    setHighlight(undefined)
     onEnd()
   }
 
@@ -27,9 +37,10 @@ export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
     }
   }, [])
 
-  const speak = ({ voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = {}) => {
+  const speak = ({ text = '', voice = voices[0], rate = 1, pitch = 1, volume = 1}: SpeakArgs) => {
     if (!supported) return
     setSpeaking(true)
+    console.log('----------------------- started speaking -----------------------')
     // Firefox won't repeat an utterance that has been
     // spoken, so we need to create a new instance each time
     const utterance = new window.SpeechSynthesisUtterance()
@@ -44,7 +55,10 @@ export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
       console.log('boundary', event)
       setHighlight(event)
     })
-    utterance.addEventListener('end', (event: SpeechSynthesisEvent) => { console.log('end', event)})
+    utterance.addEventListener('end', (event: SpeechSynthesisEvent) => {
+      console.log('end', event)
+      // !!! fixme: there could be something else to play
+    })
     utterance.addEventListener('error', (event: SpeechSynthesisErrorEvent) => { console.log('error', event)})
     utterance.addEventListener('mark', (event: SpeechSynthesisEvent) => { console.log('mark', event)})
     utterance.addEventListener('pause', (event: SpeechSynthesisEvent) => { console.log('pause', event)})
@@ -52,12 +66,13 @@ export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
     utterance.addEventListener('start', (event: SpeechSynthesisEvent) => { console.log('start', event)})
 
     window.speechSynthesis.speak(utterance)
+    console.log('----------------------- called speak -----------------------')
   }
 
   const cancel = () => {
     if (!supported) return
     setSpeaking(false)
-    setHighlight(null)
+    setHighlight(undefined)
     window.speechSynthesis.cancel()
   }
 

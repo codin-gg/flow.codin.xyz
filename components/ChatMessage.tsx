@@ -143,80 +143,58 @@ export default function ChatDisplay({ message }: { message: Message }) {
   }
 
   return (
-    <div
-      key={message.id}
-      className={cx(
-        classes.messageContainer,
-        message.role === "user"
-          ? classes.userMessageContainer
-          : classes.botMessageContainer
-      )}>
-      {/* {message.id + (message.loading ? ' | loading...' : ' | done')} */}
-      <div className={cx(classes.message, message.role === "user" ? classes.userMessage : classes.botMessage)}>
-        <div className={classes.messageWrapper}>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <MediaQuery smallerThan="md" styles={{ display: "none" }}>
-              <div className={classes.topOfMessage}>
+    <div key={message.id} className={ cx(classes.messageContainer, message.role === "user" ? classes.userMessageContainer : classes.botMessageContainer) }>
+      <div className={ cx(classes.message, message.role === "user" ? classes.userMessage : classes.botMessage) }>
+        <div className={ classes.messageWrapper }>
+          <div style={ {display: "flex", alignItems: "center"} }>
+            <MediaQuery smallerThan="md" styles={ { display: "none" } }>
+              <div className={ classes.topOfMessage }>
                 <Avatar size="sm">
-                  {message.role === "system" ? (
-                    <IconSettings />
-                  ) : message.role === "assistant" ? (
-                    message.loading ? <Loader color="orange" /> : <AssistantIcon width={px("1.5rem")} height={px("1.5rem")} />
-                  ) : (
-                    <UserIcon width={px("1.5rem")} height={px("1.5rem")} />
-                  )}
+                  { message.role === "system" ? (<IconSettings />) : message.role === "assistant" ? (message.loading ? <Loader color="orange" /> : <AssistantIcon width={px("1.5rem")} height={px("1.5rem")} />) : (<UserIcon width={px("1.5rem")} height={px("1.5rem")} />) }
                 </Avatar>
               </div>
             </MediaQuery>
-            {/* <pre>{ JSON.stringify(highlight) }</pre> */}
-            <MessageDisplay message={message} className={classes.messageDisplay} highlight={highlight} />
+
+            <MessageDisplay message={message} highlight={highlight} className={classes.messageDisplay} />
           </div>
-          <div className={classes.actionIconsWrapper}>
-            <ActionIcon
-              className={cx(classes.actionIcon, classes.topOfMessage)}
-              onClick={() => handleMainAction(message)}
-              color="gray"
-            >
+          <div className={ classes.actionIconsWrapper }>
+            <ActionIcon className={ cx(classes.actionIcon, classes.topOfMessage) } onClick={ () => handleMainAction(message) } color="gray">
               {message.role === "assistant" ? <IconRepeat /> : <IconEdit />}
             </ActionIcon>
-            <ActionIcon
-              className={cx(classes.actionIcon, classes.topOfMessage)}
-              onClick={() => handleDeleteMessage(message)}
-              color="gray"
-            >
+            <ActionIcon className={ cx(classes.actionIcon, classes.topOfMessage) } onClick={ () => handleDeleteMessage(message) } color="gray">
               <IconX />
             </ActionIcon>
-
-
-            <ActionIcon
-              className={cx(classes.actionIcon, classes.topOfMessage)}
-              onClick={
+            <Reader>
+              <ActionIcon variant='filled' color={speaking ? 'red' : 'blue'} className={ cx(classes.actionIcon, classes.topOfMessage) } onClick={
                 () => speaking
                   ? cancel()
                   : speak({
                     text: message.content,
-                    voice: voices.find(({voiceURI}) => voiceURI === settings.voice),
+                    voice: voices.find(({voiceURI}) => voiceURI === settings.voice) as SpeechSynthesisVoice || undefined,
                     rate: settings.voiceRate || defaultSettings.voiceRate,
                     pitch: settings.voicePitch || defaultSettings.voicePitch,
                     volume: settings.voiceVolume || defaultSettings.voiceVolume,
                   })
-              }
-              color={speaking ? 'red' : 'blue'}
-              variant="filled"
-            >
-              {speaking ? <IconPlaylistOff size={px("1.1rem")} stroke={3} /> : <IconPlaylist size={px("1.1rem")} stroke={3} />}
-            </ActionIcon>
+              }>
+                {speaking ? <IconPlaylistOff size={px("1.1rem")} stroke={3} /> : <IconPlaylist size={px("1.1rem")} stroke={3} />}
+              </ActionIcon>
+            </Reader>
           </div>
         </div>
       </div>
     </div>
   )
 }
+
+// !!! fixme: Reader will be the player for the text to voice service and highlight while reading
+export const Reader = ({ children }: { children: React.ReactNode }) => {
+  return (
+    <div>
+      {children}
+    </div>
+  )
+}
+
 function useRef(arg0: { loading: boolean | undefined; }) {
   throw new Error("Function not implemented.");
 }

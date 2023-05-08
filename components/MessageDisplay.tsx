@@ -122,11 +122,12 @@ const useStyles = createStyles((theme: MantineTheme) => ({
     },
   },
 }))
+
 export default ({ message, highlight, className }: Props) => {
   const { classes, cx } = useStyles()
 
   const messageContent = highlight
-    ? `${ message.content.substring(0, highlight.charIndex) }<mark>${ message.content.substring(highlight.charIndex, highlight.charIndex + highlight.charLength) }</mark> ${ message.content.substring(highlight.charIndex + highlight.charLength) }`
+    ? `<u>${ message.content.substring(0, highlight.charIndex) }</u><mark>${ message.content.substring(highlight.charIndex, highlight.charIndex + highlight.charLength) }</mark> ${ message.content.substring(highlight.charIndex + highlight.charLength) }`
     : message.content
 
   const htmlString = () => {
@@ -141,10 +142,7 @@ export default ({ message, highlight, className }: Props) => {
 
   return (
     <div className={cx(className, classes.container)}>
-      <div
-        className={cx(classes.message, message.loading && classes.loading)}
-        dangerouslySetInnerHTML={{ __html: htmlString() }}
-      ></div>
+      <div className={cx(classes.message, message.loading && classes.loading)} dangerouslySetInnerHTML={{ __html: htmlString() }}></div>
     </div>
   )
 }

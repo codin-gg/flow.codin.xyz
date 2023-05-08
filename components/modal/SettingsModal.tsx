@@ -1,7 +1,7 @@
 import { useChatStore } from '@/stores/ChatStore'
 import { TextInput, Box, Text, Slider, Select, Tabs, Switch, px, Accordion, Group, Button } from '@mantine/core'
 import { useForm } from '@mantine/form'
-import { IconSettings, IconSpeakerphone } from '@tabler/icons-react'
+import { IconMessage2Bolt, IconSettings, IconSpeakerphone } from '@tabler/icons-react'
 import { useEffect } from 'react'
 import { refreshModels, updateSettingsForm } from '@/stores/ChatActions'
 
@@ -38,6 +38,7 @@ export default function SettingsModal ({ close = () => {} } = {}) {
       <form onSubmit={form.onSubmit((values) => { updateSettingsForm(values); close() })}>
         <Tabs defaultValue='openai'>
           <Tabs.List>
+          <Tabs.Tab value='chat' icon={<IconMessage2Bolt size={px('0.8rem')} />}>Chat</Tabs.Tab>
             <Tabs.Tab value='openai' icon={<IconSettings size={px('0.8rem')} />}>OpenAI</Tabs.Tab>
             <Tabs.Tab value='speech' icon={<IconSpeakerphone size={px('0.8rem')} />}>Web Speech API</Tabs.Tab>
           </Tabs.List>

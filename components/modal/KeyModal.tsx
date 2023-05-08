@@ -1,27 +1,10 @@
-import { useState } from "react";
-import {
-  Button,
-  Group,
-  Box,
-  Loader,
-  Tabs,
-  px,
-  PasswordInput,
-  TextInput,
-} from "@mantine/core";
-import { notifications } from "@mantine/notifications";
-
-import { testKey as testKeyOpenAI } from "@/stores/OpenAI";
-
-import { useChatStore } from "@/stores/ChatStore";
-import {
-  IconBrandWindows,
-  IconCheck,
-  IconRobot,
-  IconVolume,
-  IconX,
-} from "@tabler/icons-react";
-import { update } from "@/stores/ChatActions";
+import { useState } from "react"
+import { Button, Group, Box, Loader, Tabs, px, PasswordInput, TextInput } from "@mantine/core"
+import { notifications } from "@mantine/notifications"
+import { testKey as testKeyOpenAI } from "@/stores/OpenAI"
+import { useChatStore } from "@/stores/ChatStore"
+import { IconCheck, IconRobot, IconX } from "@tabler/icons-react"
+import { update } from "@/stores/ChatActions"
 
 export function APIPanel({
   name,

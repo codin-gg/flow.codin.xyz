@@ -42,6 +42,9 @@ export default function SettingsModal ({ close = () => {} } = {}) {
             <Tabs.Tab value='openai' icon={<IconSettings size={px('0.8rem')} />}>OpenAI</Tabs.Tab>
             <Tabs.Tab value='speech' icon={<IconSpeakerphone size={px('0.8rem')} />}>Web Speech API</Tabs.Tab>
           </Tabs.List>
+          <Tabs.Panel value='chat' pt='xs'>
+            <p>Soon, thins like clearing all chats, importing or exporting them from other clients will all take place here.</p>
+          </Tabs.Panel>
           <Tabs.Panel value='openai' pt='xs'>
             <Accordion defaultValue='general'>
               <Accordion.Item value='general'>

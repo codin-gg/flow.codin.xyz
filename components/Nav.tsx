@@ -1,44 +1,12 @@
-import { useChatStore } from "@/stores/ChatStore";
-import { v4 as uuidv4 } from "uuid";
-import {
-  ActionIcon,
-  Box,
-  Burger,
-  Group,
-  MediaQuery,
-  Modal,
-  Navbar,
-  Text,
-  TextInput,
-  Tooltip,
-  createStyles,
-  getStylesRef,
-  px,
-  rem,
-  useMantineColorScheme,
-} from "@mantine/core";
-import { upperFirst, useDisclosure, useMediaQuery } from "@mantine/hooks";
-import {
-  IconArrowRight,
-  IconEdit,
-  IconKey,
-  IconMoon,
-  IconPlus,
-  IconSettings,
-  IconSun,
-  IconTrash,
-} from "@tabler/icons-react";
-import { useRef, useState } from "react";
-import ClearChatsButton from "./ClearChatsButton";
-import KeyModal from "./modal/KeyModal";
-import SettingsModal from "./modal/SettingsModal";
-import { useRouter } from "next/router";
-import {
-  clearChats,
-  deleteChat,
-  setNavOpened,
-  updateChat,
-} from "@/stores/ChatActions";
+import { useChatStore } from "@/stores/ChatStore"
+import { ActionIcon, Box, Burger, Group, MediaQuery, Modal, Navbar, Text, TextInput, Tooltip, createStyles, getStylesRef, px, rem, useMantineColorScheme } from "@mantine/core"
+import { upperFirst, useDisclosure, useMediaQuery } from "@mantine/hooks"
+import { IconApi, IconArrowRight, IconEdit, IconMoon, IconPlus, IconSettings, IconSun, IconTrash } from "@tabler/icons-react"
+import { useRef, useState } from "react"
+import KeyModal from "./modal/KeyModal"
+import SettingsModal from "./modal/SettingsModal"
+import { useRouter } from "next/router"
+import { deleteChat, setNavOpened, updateChat,} from "@/stores/ChatActions"
 
 const useStyles = createStyles((theme) => ({
   header: {
@@ -321,7 +289,7 @@ export default function NavbarSimple() {
           <span>{upperFirst(colorScheme === "light" ? "dark" : "light")} theme</span>
         </a>
 
-        <Modal centered opened={openedKeyModal} onClose={closeKeyModal} title="API Keys">
+        <Modal centered opened={openedKeyModal} onClose={closeKeyModal} title="OpenAI">
           <KeyModal close={closeKeyModal} />
         </Modal>
 
@@ -335,8 +303,8 @@ export default function NavbarSimple() {
             if (isSmall) setNavOpened(false);
           }}
         >
-          <IconKey className={classes.linkIcon} stroke={1.5} />
-          <span>API Keys</span>
+          <IconApi className={classes.linkIcon} stroke={1.5} />
+          <span>OpenAI</span>
         </a>
 
         <Modal centered opened={openedSettingsModal} onClose={closeSettingsModal} title="Settings">

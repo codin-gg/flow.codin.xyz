@@ -3,7 +3,7 @@ import { Button, Group, Box, Loader, Tabs, px, PasswordInput, TextInput } from "
 import { notifications } from "@mantine/notifications"
 import { testKey as testKeyOpenAI } from "@/stores/OpenAI"
 import { useChatStore } from "@/stores/ChatStore"
-import { IconCheck, IconRobot, IconX } from "@tabler/icons-react"
+import { IconApi, IconCheck, IconRobot, IconSettings2, IconSettingsCog, IconX } from "@tabler/icons-react"
 import { update } from "@/stores/ChatActions"
 
 export function APIPanel({
@@ -71,8 +71,7 @@ export function APIPanel({
     success: <IconCheck color="green" size={px("1rem")} />,
     error: <IconX color="red" size={px("1rem")} />,
   };
-  const icon = iconMap[checkStatus];
-  console.log(apiKey);
+  const icon = iconMap[checkStatus]
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -84,6 +83,15 @@ export function APIPanel({
           icon={icon}
           value={apiKey}
           onChange={handleKeyChange}
+        />
+        <br/>
+        <TextInput
+          label="API User"
+          placeholder="Identifier unique to this client (usage: quota monitoring)"
+          icon={icon}
+          disabled={true}
+          // value={apiKey}
+          // onChange={handleKeyChange}
         />
         {setKeyFunRegion && (
           <TextInput
@@ -120,9 +128,9 @@ export default function KeyModal({ close }: { close: () => void }) {
       <Box mx="auto">
         <Tabs defaultValue="openai">
           <Tabs.List>
-            <Tabs.Tab value="openai" icon={<IconRobot size={px("0.8rem")} />}>
-              OpenAI
-            </Tabs.Tab>
+            <Tabs.Tab value="openai" icon={<IconApi size={px("0.8rem")} />}>API</Tabs.Tab>
+            <Tabs.Tab value="general" icon={<IconSettings2 size={px("0.8rem")} />}>General</Tabs.Tab>
+            <Tabs.Tab value="advanced" icon={<IconSettingsCog size={px("0.8rem")} />}>Advanced</Tabs.Tab>
           </Tabs.List>
 
           <Tabs.Panel value="openai" pt="xs">
@@ -146,6 +154,12 @@ export default function KeyModal({ close }: { close: () => void }) {
               validateKey={testKeyOpenAI}
               closeModal={close}
             />
+          </Tabs.Panel>
+          <Tabs.Panel value="general" pt="xs">
+            <p>Settings»OpenAI»General will go here! and we will get rid of the accordion 😬</p>
+          </Tabs.Panel>
+          <Tabs.Panel value="advanced" pt="xs">
+            <p>Settings»OpenAI»Advanced will go here! and we will get rid of the accordion 😬</p>
           </Tabs.Panel>
         </Tabs>
       </Box>

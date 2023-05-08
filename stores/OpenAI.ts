@@ -1,51 +1,30 @@
-import { IncomingMessage } from "http";
-import https from "https";
-import { Message, truncateMessages, countTokens } from "./Message";
-import { getModelInfo } from "./Model";
-import axios from "axios";
+import { request } from 'https'
+import { IncomingMessage } from 'http'
+
+import { Message, truncateMessages, countTokens } from './Message'
+import { getModelInfo } from './Model'
 
 export function assertIsError(e: any): asserts e is Error {
   if (!(e instanceof Error)) {
-    throw new Error("Not an error");
-  }
-}
-
-async function fetchFromAPI(endpoint: string, key: string) {
-  try {
-    const res = await axios.get(endpoint, {
-      headers: {
-        Authorization: `Bearer ${key}`,
-      },
-    });
-    return res;
-  } catch (e) {
-    if (axios.isAxiosError(e)) {
-      console.error(e.response?.data);
-    }
-    throw e;
+    throw new Error('Not an error');
   }
 }
 
 export async function testKey(key: string): Promise<boolean> {
   try {
-    const res = await fetchFromAPI("https://api.openai.com/v1/models", key);
-    return res.status === 200;
-  } catch (e) {
-    if (axios.isAxiosError(e)) {
-      if (e.response!.status === 401) {
-        return false;
-      }
-    }
+    const { status = 401 } = await window?.fetch('https://api.openai.com/v1/models', { headers: { Authorization: `Bearer ${key}` }})
+    return status === 200
+  } catch (error) {
+    return false
   }
-  return false;
 }
 
 export async function fetchModels(key: string): Promise<string[]> {
   try {
-    const res = await fetchFromAPI("https://api.openai.com/v1/models", key);
-    return res.data.data.map((model: any) => model.id);
-  } catch (e) {
-    return [];
+    const { data } = await (await window?.fetch('https://api.openai.com/v1/models', { headers: { Authorization: `Bearer ${key}` }}))?.json()
+    return data.map((model: any) => model.id)
+  } catch (error) {
+    return []
   }
 }
 
@@ -56,25 +35,25 @@ export async function _streamCompletion(
   callback?: ((res: IncomingMessage) => void) | undefined,
   errorCallback?: ((res: IncomingMessage, body: string) => void) | undefined
 ) {
-  const req = https.request(
+  const req = request(
     {
-      hostname: "api.openai.com",
+      hostname: 'api.openai.com',
       port: 443,
-      path: "/v1/chat/completions",
-      method: "POST",
+      path: '/v1/chat/completions',
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${apiKey}`,
       },
       signal: abortController?.signal,
     },
     (res) => {
       if (res.statusCode !== 200) {
-        let errorBody = "";
-        res.on("data", (chunk) => {
+        let errorBody = '';
+        res.on('data', (chunk) => {
           errorBody += chunk;
         });
-        res.on("end", () => {
+        res.on('end', () => {
           errorCallback?.(res, errorBody);
         });
         return;
@@ -101,15 +80,15 @@ interface ChatCompletionParams {
 }
 
 const paramKeys = [
-  "model",
-  "temperature",
-  "top_p",
-  "n",
-  "stop",
-  "max_tokens",
-  "presence_penalty",
-  "frequency_penalty",
-  "logit_bias",
+  'model',
+  'temperature',
+  'top_p',
+  'n',
+  'stop',
+  'max_tokens',
+  'presence_penalty',
+  'frequency_penalty',
+  'logit_bias',
 ];
 
 export async function streamCompletion(
@@ -123,7 +102,6 @@ export async function streamCompletion(
 ) {
   const modelInfo = getModelInfo(params.model);
 
-  // Truncate messages to fit within maxTokens parameter
   const submitMessages = truncateMessages(
     messages,
     modelInfo.maxTokens,
@@ -192,11 +170,5 @@ export async function streamCompletion(
     });
   };
 
-  return _streamCompletion(
-    payload,
-    apiKey,
-    abortController,
-    successCallback,
-    errorCallback
-  );
+  return _streamCompletion(payload, apiKey, abortController, successCallback, errorCallback) // this could be an stream/event-emitter or a generator 🤔
 }

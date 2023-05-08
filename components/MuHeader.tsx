@@ -78,65 +78,53 @@ const useStyles = createStyles((theme) => ({
 
 export default function MuHeader () {
   const { classes, theme } = useStyles()
-  const { voices } = useSpeechSynthesis()
-
+  const { voices } = useSpeechSynthesis() as { voices: SpeechSynthesisVoice[] }
   const router = useRouter()
-  const activeChatId = router.query.chatId
-
-  const isSmall = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
-
+  const isMobileDevice = useMediaQuery(`(max-width: ${theme.breakpoints.sm})`)
   const chats = useChatStore((state) => state.chats)
   const settings = useChatStore((state) => state.settingsForm)
   const navOpened = useChatStore((state) => state.navOpened)
-
-  const activeChat = chats.find((chat) => chat.id === activeChatId)
+  const activeChat = chats.find((chat) => chat.id === router.query.chatId)
 
   return (
     <Header height={36} mb={120} sx={{ zIndex: 1002 }}>
       <Container className={classes.inner}>
-
         <MediaQuery largerThan='sm' styles={{ display: 'none', width: 0 }}>
           <Burger opened={navOpened} onClick={() => setNavOpened(!navOpened)} size='sm' color={theme.colors.gray[6]} />
         </MediaQuery>
-
         <MediaQuery largerThan='sm' styles={{ width: '100%', justifyContent: 'center' }}>
           <Group spacing={5} className={classes.social} noWrap c='dimmed'>
-            {activeChat?.chosenCharacter && (
-              <>
-                <MediaQuery smallerThan='md' styles={{ display: 'none' }}>
-                  <Text size='sm'>{activeChat?.chosenCharacter}</Text>
-                </MediaQuery>
-                <MediaQuery smallerThan='md' styles={{ display: 'none' }}>
-                  <Divider size='xs' orientation='vertical' />
-                </MediaQuery>
-              </>
-            )}
-            <Text size='sm'>{settings?.model}</Text>
+            {
+              activeChat?.chosenCharacter && (
+                <>
+                  <MediaQuery smallerThan='md' styles={{ display: 'none' }}>
+                    <Text size='sm'>{activeChat?.chosenCharacter}</Text>
+                  </MediaQuery>
+                  <MediaQuery smallerThan='md' styles={{ display: 'none' }}>
+                    <Divider size='xs' orientation='vertical' />
+                  </MediaQuery>
+                </>
+              )
+            }
+            <Text size='sm'>{ settings?.model }</Text>
             <>
               <Divider size='xs' orientation='vertical' />
-              <Text size='sm'>
-                ${(activeChat?.costIncurred || 0).toFixed(2)}
-              </Text>
+              <Text size='sm'>${( activeChat?.costIncurred || 0).toFixed(2) }</Text>
             </>
             <>
               <Divider size='xs' orientation='vertical' />
               <Text size='sm'>
-                {settings.voice || (voices.find((voice: SpeechSynthesisVoice) => voice.default) as unknown as SpeechSynthesisVoice).voiceURI || 'system'}
+                { settings.voice || voices?.find(voice => voice?.default)?.voiceURI || 'system' }
               </Text>
             </>
           </Group>
         </MediaQuery>
-        <Group spacing={0} className={classes.social} position='right' noWrap>
+        <Group position='right' spacing={ 0} className={ classes.social } noWrap>
           <MediaQuery largerThan='sm' styles={{ display: 'none', width: 0 }}>
-            <ActionIcon
-              onClick={() => {
-                addChat(router)
-                if (isSmall) {
-                  setNavOpened(false)
-                }
-              }}
-              size='lg'
-            >
+            <ActionIcon size='lg' onClick={() => {
+              addChat(router)
+              if (isMobileDevice) setNavOpened(false)
+            }}>
               <IconPlus size={px('1.5rem')} stroke={1.5} color={theme.colors.gray[6]} />
             </ActionIcon>
           </MediaQuery>

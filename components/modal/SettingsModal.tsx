@@ -7,7 +7,7 @@ import { refreshModels, updateSettingsForm } from '@/stores/ChatActions'
 
 import { useSpeechSynthesis } from '../../lib/useSpeechSynthesis'
 
-export default function SettingsModal ({ close = () => void } = {}) {
+export default function SettingsModal ({ close = () => {} } = {}) {
   const modelChoicesChat = useChatStore((state) => state.modelChoicesChat) || []
   const settings = useChatStore((state) => state.settingsForm)
   const defaultSettings = useChatStore((state) => state.defaultSettings)

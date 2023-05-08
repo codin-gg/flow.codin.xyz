@@ -1,43 +1,33 @@
-import { AppProps } from "next/app";
-import Head from "next/head";
-import {
-  AppShell,
-  ColorScheme,
-  ColorSchemeProvider,
-  MantineProvider,
-} from "@mantine/core";
-import { Notifications } from "@mantine/notifications";
-import "highlight.js/styles/stackoverflow-dark.css";
+import { AppProps } from "next/app"
+import Head from "next/head"
+import { AppShell, ColorScheme, ColorSchemeProvider, MantineProvider, Center, Loader } from "@mantine/core"
+import { Notifications } from "@mantine/notifications"
+import "highlight.js/styles/stackoverflow-dark.css"
+import { useChatStore } from "@/stores/ChatStore"
+import Nav from "@/components/Nav"
+import { useEffect, useState } from "react"
+import UIController from "@/components/UIController"
+import { setColorScheme } from "@/stores/ChatActions"
 
-import { useChatStore } from "@/stores/ChatStore";
-
-import Nav from "@/components/Nav";
-import { useEffect, useState } from "react";
-import UIController from "@/components/UIController";
-import { setColorScheme } from "@/stores/ChatActions";
-
-export default function App(props: AppProps) {
-  const { Component, pageProps } = props;
-
-  const colorScheme = useChatStore((state) => state.colorScheme);
+export default function App({ Component, pageProps }: AppProps) {
+  const colorScheme = useChatStore((state) => state.colorScheme)
 
   const toggleColorScheme = (value?: ColorScheme) => {
-    const nextColorScheme =
-      value || (colorScheme === "dark" ? "light" : "dark");
-    setColorScheme(nextColorScheme);
-  };
+    const nextColorScheme = value || (colorScheme === "dark" ? "light" : "dark")
+    setColorScheme(nextColorScheme)
+  }
 
   const apiKey = useChatStore((state) => state.apiKey);
-
   const [isHydrated, setIsHydrated] = useState(false);
 
-  //Wait till NextJS rehydration completes
-  useEffect(() => {
-    setIsHydrated(true);
-  }, []);
+  useEffect(() => { setIsHydrated(true) }, [])
 
   if (!isHydrated) {
-    return <div>Loading...</div>;
+    return (
+      <Center maw={400} h={100} mx="auto">
+        <Loader color="gray" variant="bars" />
+      </Center>
+    )
   }
 
   return (

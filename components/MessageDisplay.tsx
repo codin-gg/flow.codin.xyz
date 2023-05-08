@@ -49,12 +49,8 @@ const useStyles = createStyles((theme: MantineTheme) => ({
   message: {
     '& mark': {
       display: 'inline-block',
-      backgroundColor: 'orange',
-      padding: '0.2rem',
-      transform: 'scale(1.314)',
-      borderRadius: '0.2rem',
-      boxShadow: '-0.25rem 0 0 orange, 0.25rem 0 0 orange',
-      transition: 'all 1s ease'
+      boxShadow: '-0.25rem 0 0 yellow, 0.25rem 0 0 yellow',
+      transition: 'all 2s ease'
     },
     '& pre': {
       overflowX: 'scroll'

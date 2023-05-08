@@ -1,18 +1,19 @@
 /* eslint-disable react/display-name */
 /* eslint-disable import/no-anonymous-default-export */
-import type { Message } from "@/stores/Message";
-import MarkdownIt from "markdown-it";
-import mdHighlight from "markdown-it-highlightjs";
+import type { Message } from '@/stores/Message'
+import MarkdownIt from 'markdown-it'
+import mdHighlight from 'markdown-it-highlightjs'
 // @ts-ignore
-import mdCodeCopy from "./markdownCopy";
+import mdCodeCopy from './markdownCopy'
 
-import { createStyles, keyframes, MantineTheme } from "@mantine/core";
+import { createStyles, keyframes, MantineTheme } from '@mantine/core'
 
 interface Props {
-  message: Message;
-  showRetry?: boolean;
-  onRetry?: () => void;
-  className?: string;
+  message: Message
+  highlight?: SpeechSynthesisEvent
+  showRetry?: boolean
+  onRetry?: () => void
+  className?: string
 }
 
 const blink = keyframes`
@@ -47,6 +48,14 @@ const useStyles = createStyles((theme: MantineTheme) => ({
     },
   },
   message: {
+    "& mark": {
+      color: 'white',
+      backgroundColor: 'orange',
+      padding: '0.2rem 0.1rem',
+      fontWeight: 600,
+      borderRadius: '0.2rem',
+      transition: 'all 0.2s ease',
+    },
     "& pre": {
       overflowX: "scroll",
     },
@@ -99,6 +108,12 @@ const useStyles = createStyles((theme: MantineTheme) => ({
           : theme.colors.gray[1],
     },
   },
+  highlight: {
+    backgroundColor: 'orange',
+    fontWeight: 600,
+    color: 'white',
+    padding: '0.2em',
+  },
   loading: {
     [`p:last-child::after`]: {
       content: '"▎"',
@@ -110,28 +125,23 @@ const useStyles = createStyles((theme: MantineTheme) => ({
       animation: `${blink} 1s infinite`,
     },
   },
-}));
-export default ({ message, className }: Props) => {
-  const { classes, cx } = useStyles();
+}))
+export default ({ message, highlight, className }: Props) => {
+  const { classes, cx } = useStyles()
+
+  const messageContent = highlight
+    ? `${ message.content.substring(0, highlight.charIndex) }<mark>${ message.content.substring(highlight.charIndex, highlight.charIndex + highlight.charLength) }</mark> ${ message.content.substring(highlight.charIndex + highlight.charLength) }`
+    : message.content
 
   const htmlString = () => {
-    let md = MarkdownIt({
-      linkify: true,
-      breaks: true,
-    }).use(mdCodeCopy, {
-      iconStyle: "", // Clear default icon style
-      iconClass: classes.copyText, // Set a custom class for the icon element
-      buttonStyle:
-        "position: absolute; top: 7.5px; right: 6px; cursor: pointer; outline: none; border: none; background: none; color: #ffffff; background-color: #333;",
-      buttonClass: "",
-    });
+    let md = MarkdownIt({html: true, linkify: true, breaks: true}).use(mdCodeCopy, { iconStyle: '', iconClass: classes.copyText, buttonStyle: 'position: absolute; top: 7.5px; right: 6px; cursor: pointer; outline: none; border: none; background: none; color: #ffffff; background-color: #333;', buttonClass: ''})
 
-    if (message.role === "assistant") {
-      md = md.use(mdHighlight);
+    if (message.role === 'assistant') {
+      md = md.use(mdHighlight)
     }
 
-    return md.render(message.content);
-  };
+    return md.render(messageContent)
+  }
 
   return (
     <div className={cx(className, classes.container)}>
@@ -140,5 +150,5 @@ export default ({ message, className }: Props) => {
         dangerouslySetInnerHTML={{ __html: htmlString() }}
       ></div>
     </div>
-  );
-};
+  )
+}

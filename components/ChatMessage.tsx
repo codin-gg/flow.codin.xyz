@@ -1,15 +1,12 @@
-import { ActionIcon, Avatar, createStyles, getStylesRef, MantineTheme, MediaQuery, px } from '@mantine/core'
+import { ActionIcon, Avatar, createStyles, getStylesRef, Loader, MantineTheme, MediaQuery, px } from '@mantine/core'
 import { IconEdit, IconRepeat, IconSettings, IconX, IconPlaylist, IconPlaylistOff} from '@tabler/icons-react'
-
-import MessageDisplay from './MessageDisplay'
-import UserIcon from './UserIcon'
-import AssistantIcon from './AssistantIcon'
-
 import { Message } from '@/stores/Message'
 import { useChatStore } from '@/stores/ChatStore'
 import { useSpeechSynthesis } from '../lib/useSpeechSynthesis'
 import { delMessage,regenerateAssistantMessage,setEditingMessage } from '@/stores/ChatActions'
-import { useEffect } from 'react'
+import MessageDisplay from './MessageDisplay'
+import UserIcon from './UserIcon'
+import AssistantIcon from './AssistantIcon'
 
 const useStyles = createStyles((theme: MantineTheme) => ({
   container: {
@@ -127,9 +124,8 @@ const useStyles = createStyles((theme: MantineTheme) => ({
 }));
 
 export default function ChatDisplay({ message }: { message: Message }) {
-  const { classes, cx } = useStyles();
-  // voices: getVoices
-  const { voices, speaking, cancel, speak } = useSpeechSynthesis()
+  const { classes, cx } = useStyles()
+  const { voices /* constant.voices*/ , speaking, highlight, cancel, speak } = useSpeechSynthesis()
 
   const settings = useChatStore((state) => state.settingsForm)
   const defaultSettings = useChatStore((state) => state.defaultSettings)
@@ -143,18 +139,8 @@ export default function ChatDisplay({ message }: { message: Message }) {
   };
 
   const handleDeleteMessage = (message: Message) => {
-    delMessage(message);
-  };
-
-  // const wasLoading = message.loading
-  // useEffect(() => {
-  //   if (wasLoading === true && message.loading === false) {
-  //     console.log('yo!')
-  //   }
-  //   return () => {
-  //     // previousMessageState.loading = message.loading
-  //   }
-  // }, [message.loading])
+    delMessage(message)
+  }
 
   return (
     <div
@@ -166,12 +152,7 @@ export default function ChatDisplay({ message }: { message: Message }) {
           : classes.botMessageContainer
       )}>
       {/* {message.id + (message.loading ? ' | loading...' : ' | done')} */}
-      <div
-        className={cx(
-          classes.message,
-          message.role === "user" ? classes.userMessage : classes.botMessage
-        )}
-      >
+      <div className={cx(classes.message, message.role === "user" ? classes.userMessage : classes.botMessage)}>
         <div className={classes.messageWrapper}>
           <div
             style={{
@@ -185,14 +166,15 @@ export default function ChatDisplay({ message }: { message: Message }) {
                   {message.role === "system" ? (
                     <IconSettings />
                   ) : message.role === "assistant" ? (
-                    <AssistantIcon width={px("1.5rem")} height={px("1.5rem")} />
+                    message.loading ? <Loader color="orange" /> : <AssistantIcon width={px("1.5rem")} height={px("1.5rem")} />
                   ) : (
                     <UserIcon width={px("1.5rem")} height={px("1.5rem")} />
                   )}
                 </Avatar>
               </div>
             </MediaQuery>
-            <MessageDisplay message={message} className={classes.messageDisplay} />
+            {/* <pre>{ JSON.stringify(highlight) }</pre> */}
+            <MessageDisplay message={message} className={classes.messageDisplay} highlight={highlight} />
           </div>
           <div className={classes.actionIconsWrapper}>
             <ActionIcon
@@ -233,7 +215,7 @@ export default function ChatDisplay({ message }: { message: Message }) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 function useRef(arg0: { loading: boolean | undefined; }) {
   throw new Error("Function not implemented.");

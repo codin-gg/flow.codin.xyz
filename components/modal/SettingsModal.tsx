@@ -210,6 +210,7 @@ export default function SettingsModal ({ close = () => {} } = {}) {
                     onChange={(value) =>
                       form.setFieldValue('voiceRate', value)}
                   />
+                  {/* some settings goes here (ie. a switch) to enable/disable highlighting of what is being said */}
                 </Accordion.Panel>
               </Accordion.Item>
               <Accordion.Item value='recognition'>

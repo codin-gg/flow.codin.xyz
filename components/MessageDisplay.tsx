@@ -32,7 +32,6 @@ const useStyles = createStyles((theme: MantineTheme) => ({
       maxWidth: "calc(820px - 120px)",
     },
   },
-  // This is implemented in the most horrible way and needs a FF bad
   copyText: {
     "&::before": {
       content: '"copy"',
@@ -48,16 +47,17 @@ const useStyles = createStyles((theme: MantineTheme) => ({
     },
   },
   message: {
-    "& mark": {
-      color: 'white',
+    '& mark': {
+      display: 'inline-block',
       backgroundColor: 'orange',
-      padding: '0.2rem 0.1rem',
-      fontWeight: 600,
+      padding: '0.2rem',
+      transform: 'scale(1.314)',
       borderRadius: '0.2rem',
-      transition: 'all 0.2s ease',
+      boxShadow: '-0.25rem 0 0 orange, 0.25rem 0 0 orange',
+      transition: 'all 1s ease'
     },
-    "& pre": {
-      overflowX: "scroll",
+    '& pre': {
+      overflowX: 'scroll'
     },
     "& table": {
       width: "100%",

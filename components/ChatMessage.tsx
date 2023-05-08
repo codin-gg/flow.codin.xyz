@@ -1,22 +1,15 @@
-import {
-  ActionIcon,
-  Avatar,
-  createStyles,
-  getStylesRef,
-  MantineTheme,
-  MediaQuery,
-  px,
-} from "@mantine/core";
+import { ActionIcon, Avatar, createStyles, getStylesRef, MantineTheme, MediaQuery, px } from '@mantine/core'
+import { IconEdit, IconRepeat, IconSettings, IconX, IconPlaylist, IconPlaylistOff} from '@tabler/icons-react'
 
-import { IconEdit, IconRepeat, IconSettings, IconX, IconPlaylist, IconPlaylistOff} from "@tabler/icons-react";
-import MessageDisplay from "./MessageDisplay";
+import MessageDisplay from './MessageDisplay'
+import UserIcon from './UserIcon'
+import AssistantIcon from './AssistantIcon'
 
-import UserIcon from "./UserIcon";
-import AssistantIcon from "./AssistantIcon";
-
-import { Message } from "@/stores/Message";
-import { useSpeechSynthesis } from "react-speech-kit";
-import { delMessage,regenerateAssistantMessage,setEditingMessage } from "@/stores/ChatActions";
+import { Message } from '@/stores/Message'
+import { useChatStore } from '@/stores/ChatStore'
+import { useSpeechSynthesis } from '../lib/useSpeechSynthesis'
+import { delMessage,regenerateAssistantMessage,setEditingMessage } from '@/stores/ChatActions'
+import { useEffect } from 'react'
 
 const useStyles = createStyles((theme: MantineTheme) => ({
   container: {
@@ -135,7 +128,10 @@ const useStyles = createStyles((theme: MantineTheme) => ({
 
 export default function ChatDisplay({ message }: { message: Message }) {
   const { classes, cx } = useStyles();
-  const { cancel, speaking, speak } = useSpeechSynthesis();
+  const { voices, speaking, cancel, speak } = useSpeechSynthesis()
+
+  const settings = useChatStore((state) => state.settingsForm)
+  const defaultSettings = useChatStore((state) => state.defaultSettings)
 
   const handleMainAction = (message: Message) => {
     if (message.role === "assistant") {
@@ -149,6 +145,16 @@ export default function ChatDisplay({ message }: { message: Message }) {
     delMessage(message);
   };
 
+  // const wasLoading = message.loading
+  // useEffect(() => {
+  //   if (wasLoading === true && message.loading === false) {
+  //     console.log('yo!')
+  //   }
+  //   return () => {
+  //     // previousMessageState.loading = message.loading
+  //   }
+  // }, [message.loading])
+
   return (
     <div
       key={message.id}
@@ -157,8 +163,8 @@ export default function ChatDisplay({ message }: { message: Message }) {
         message.role === "user"
           ? classes.userMessageContainer
           : classes.botMessageContainer
-      )}
-    >{message.id}
+      )}>
+      {/* {message.id + (message.loading ? ' | loading...' : ' | done')} */}
       <div
         className={cx(
           classes.message,
@@ -185,11 +191,7 @@ export default function ChatDisplay({ message }: { message: Message }) {
                 </Avatar>
               </div>
             </MediaQuery>
-
-            <MessageDisplay
-              message={message}
-              className={classes.messageDisplay}
-            />
+            <MessageDisplay message={message} className={classes.messageDisplay} />
           </div>
           <div className={classes.actionIconsWrapper}>
             <ActionIcon
@@ -210,7 +212,17 @@ export default function ChatDisplay({ message }: { message: Message }) {
 
             <ActionIcon
               className={cx(classes.actionIcon, classes.topOfMessage)}
-              onClick={() => speaking ? cancel() : speak({ text: message.content, voice: null })}
+              onClick={
+                () => speaking
+                  ? cancel()
+                  : speak({
+                    text: message.content,
+                    voice: voices.find(({voiceURI}) => voiceURI === settings.voice),
+                    rate: settings.voiceRate || defaultSettings.voiceRate,
+                    pitch: settings.voicePitch || defaultSettings.voicePitch,
+                    volume: settings.voiceVolume || defaultSettings.voiceVolume,
+                  })
+              }
               color={speaking ? 'red' : 'blue'}
               variant="filled"
             >
@@ -222,3 +234,7 @@ export default function ChatDisplay({ message }: { message: Message }) {
     </div>
   );
 }
+function useRef(arg0: { loading: boolean | undefined; }) {
+  throw new Error("Function not implemented.");
+}
+

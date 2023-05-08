@@ -7,6 +7,8 @@ export interface Message {
   content: string;
   role: "user" | "assistant" | "system";
   loading?: boolean;
+  // todo: add language
+  // todo: add timestamp
 }
 
 // Helper function to estimate tokens

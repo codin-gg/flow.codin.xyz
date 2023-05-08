@@ -61,11 +61,7 @@ export default function UIController() {
   return (
     <Menu withArrow closeOnItemClick={false}>
       <Menu.Target>
-        <Button
-          sx={{ height: 36, borderRadius: "0px 8px 0px 0px" }}
-          compact
-          variant="light"
-        >
+        <Button sx={{ height: 36, borderRadius: "0px 8px 0px 0px" }} compact variant="light">
           <IconDotsVertical size={px("1.1rem")} stroke={1.5} />
         </Button>
       </Menu.Target>

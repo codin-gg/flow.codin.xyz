@@ -30,8 +30,8 @@ import {
 } from "@tabler/icons-react";
 import { useRef, useState } from "react";
 import ClearChatsButton from "./ClearChatsButton";
-import KeyModal from "./KeyModal";
-import SettingsModal from "./SettingsModal";
+import KeyModal from "./modal/KeyModal";
+import SettingsModal from "./modal/SettingsModal";
 import { useRouter } from "next/router";
 import {
   clearChats,
@@ -301,7 +301,10 @@ export default function NavbarSimple() {
         </Navbar.Section>
       </MediaQuery>
       <Navbar.Section className={classes.footer}>
-        {links?.length > 0 && (
+
+        {/* fixme: this should be somewhere in settings, not here taking up space */}
+
+        {/* {links?.length > 0 && (
           <ClearChatsButton
             classes={classes}
             clearHandler={() => {
@@ -309,20 +312,16 @@ export default function NavbarSimple() {
               router.push("/");
             }}
           />
-        )}
+        )} */}
 
-        <a
-          href="#"
-          className={classes.link}
-          onClick={() => toggleColorScheme()}
-        >
+        {/* fixme: end. */}
+
+        <a href="#" className={classes.link} onClick={() => toggleColorScheme()}>
           <Icon className={classes.linkIcon} stroke={1.5} />
-          <span>
-            {upperFirst(colorScheme === "light" ? "dark" : "light")} theme
-          </span>
+          <span>{upperFirst(colorScheme === "light" ? "dark" : "light")} theme</span>
         </a>
 
-        <Modal opened={openedKeyModal} onClose={closeKeyModal} title="API Keys">
+        <Modal centered opened={openedKeyModal} onClose={closeKeyModal} title="API Keys">
           <KeyModal close={closeKeyModal} />
         </Modal>
 
@@ -340,11 +339,7 @@ export default function NavbarSimple() {
           <span>API Keys</span>
         </a>
 
-        <Modal
-          opened={openedSettingsModal}
-          onClose={closeSettingsModal}
-          title="Settings"
-        >
+        <Modal centered opened={openedSettingsModal} onClose={closeSettingsModal} title="Settings">
           <SettingsModal close={closeSettingsModal} />
         </Modal>
 
@@ -355,7 +350,6 @@ export default function NavbarSimple() {
             event.preventDefault();
             openedKeyModal && closeKeyModal();
             openSettingsModal();
-
             if (isSmall) setNavOpened(false);
           }}
         >

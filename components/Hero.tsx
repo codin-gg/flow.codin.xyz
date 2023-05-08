@@ -13,7 +13,7 @@ import {
 } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
 import { IconBrandGithub, IconCheck } from "@tabler/icons-react";
-import KeyModal from "./KeyModal";
+import KeyModal from "./modal/KeyModal";
 
 const useStyles = createStyles((theme) => ({
   inner: {

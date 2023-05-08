@@ -121,7 +121,7 @@ export default function MuHeader () {
             <>
               <Divider size='xs' orientation='vertical' />
               <Text size='sm'>
-                {settings.voice || voices.find(voice => voice.default)?.voiceURI || 'system'}
+                {settings.voice || (voices.find((voice: SpeechSynthesisVoice) => voice.default) as unknown as SpeechSynthesisVoice).voiceURI || 'system'}
               </Text>
             </>
           </Group>

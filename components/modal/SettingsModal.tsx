@@ -1,6 +1,5 @@
 import { useChatStore } from '@/stores/ChatStore'
-import { TextInput, Button, Group, Box, Text, Slider, Select, Tabs, Switch, px, Accordion } from '@mantine/core'
-// import ISO6391 from 'iso-639-1'
+import { TextInput, Box, Text, Slider, Select, Tabs, Switch, px, Accordion, Group, Button } from '@mantine/core'
 import { useForm } from '@mantine/form'
 import { IconSettings, IconSpeakerphone } from '@tabler/icons-react'
 import { useEffect } from 'react'
@@ -8,86 +7,12 @@ import { refreshModels, updateSettingsForm } from '@/stores/ChatActions'
 
 import { useSpeechSynthesis } from '../../lib/useSpeechSynthesis'
 
-// function getLanguages () {
-//   const languageCodes = ISO6391.getAllCodes()
-//   return languageCodes.map((code) => ({ label: `${ISO6391.getName(code)} (${code})`, value: code }))
-// }
-
-// interface ItemProps extends React.ComponentPropsWithoutRef<'div'> {
-//   label: string,
-//   value: string,
-//   lang: string,
-//   default: boolean,
-//   localService: boolean,
-//   name: string,
-//   voiceURI: string
-// }
-
-// export const toFlagEmoji = (lang) => {
-//   const OFFSET = 127397
-
-//   if (!/^[a-z]{2}$/i.test(lang)) {
-//     return null
-//     // throw new Error('Invalid country code [' + lang + ']')
-//   }
-
-//   lang = lang.toUpperCase()
-//   let flagEmoji = ''
-
-//   for (let i = 0; i < 2; i++) {
-//     const letter = lang.charAt(i)
-//     const ord = letter.charCodeAt(0)
-
-//     if (isNaN(ord)) {
-//       throw new Error('Unable to process character ' + letter + ' in [' + lang + ']')
-//     }
-
-//     const unicode = ord + OFFSET
-//     flagEmoji += String.fromCodePoint(unicode)
-//   }
-
-//   return flagEmoji
-// }
-
-// export const SelectItem = forwardRef<HTMLDivElement, ItemProps>(
-//   ({ lang, name, voiceURI }: ItemProps, ref) => (
-//     <div ref={ref}>
-//       <Group noWrap>
-
-//         <Title>
-//           {
-
-//           }
-//         </Title>
-//         <div>
-//           <Text size="sm">{voiceURI}</Text>
-//           <Text size="xs" opacity={0.65}>
-//             {lang}
-//           </Text>
-//         </div>
-//       </Group>
-//     </div>
-//   )
-// )
-
-// function emojiFlagToBase64(emoji) {
-//   const canvas = document.createElement('canvas');
-//   canvas.width = 128;
-//   canvas.height = 128;
-//   const context = canvas.getContext('2d');
-//   context.fillText(emoji, 64, 64);
-//   return canvas.toDataURL();
-// }
-
-export default function SettingsModal ({ close = () => null } = {}) {
+export default function SettingsModal ({ close = () => void } = {}) {
   const modelChoicesChat = useChatStore((state) => state.modelChoicesChat) || []
   const settings = useChatStore((state) => state.settingsForm)
   const defaultSettings = useChatStore((state) => state.defaultSettings)
-
   const { voices } = useSpeechSynthesis()
-
   useEffect(() => { refreshModels() }, [])
-
   const form = useForm({
     initialValues: settings,
     validate: {
@@ -108,8 +33,6 @@ export default function SettingsModal ({ close = () => null } = {}) {
     }
   })
 
-  // const languages = getLanguages()
-  // const langDisplayToCode = languages.reduce((acc, cur) => { acc[cur.label] = cur.value; return acc }, {} as Record<string, string>);
   return (
     <Box mx='auto'>
       <form onSubmit={form.onSubmit((values) => { updateSettingsForm(values); close() })}>
@@ -127,12 +50,9 @@ export default function SettingsModal ({ close = () => null } = {}) {
                     required
                     label='Model'
                     placeholder='Select a model'
-                    value={form.values.model}
-                    onChange={(value) => form.setFieldValue('model', String(value))}
-                    data={modelChoicesChat.map((model) => ({
-                      label: model,
-                      value: model
-                    }))}
+                    value={ form.values.model }
+                    onChange={ (value) => form.setFieldValue('model', value || defaultSettings.model) }
+                    data={ modelChoicesChat.map((model) => ({label: model,value: model})) }
                   />
                   <Text mt='lg' size='sm'>
                     Sampling temperature ({form.values.temperature})
@@ -252,13 +172,8 @@ export default function SettingsModal ({ close = () => null } = {}) {
                     label={`Voice (${form.values.voice || defaultSettings.voice || 'system'})`}
                     placeholder='Select a voice'
                     value={form.values.voice || defaultSettings.voice}
-                    onChange={(value) => form.setFieldValue('voice', String(value))}
-                    data={
-                      voices.map((voice) => ({
-                        label: `${voice.lang} | ${voice.name}${voice.default ? '*' : ''}`,
-                        value: voice.voiceURI
-                      }))
-                    }
+                    onChange={(value) => form.setFieldValue('voice', value || defaultSettings.voice)}
+                    data={ voices.map((voice:SpeechSynthesisVoice) => ({label: voice.name, value: voice.voiceURI})) }
                   />
                   <Text mt='lg' size='sm'>
                     Volume ({form.values.voiceVolume || defaultSettings.voiceVolume})

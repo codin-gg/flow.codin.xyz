@@ -19,15 +19,9 @@ const useEventCallback = (fn, dependencies) => {
     throw new Error('Cannot call an event handler while rendering.')
   })
 
-  const depRef = useRef(dependencies)
-
-  useEffect(() => {
-    depRef.current = dependencies
-  }, dependencies)
-
   useEffect(() => {
     ref.current = fn
-  }, [fn, depRef]) // Use depRef instead of spreading dependencies
+  }, [fn, ...dependencies])
 
   return useCallback((args) => {
     const fn = ref.current

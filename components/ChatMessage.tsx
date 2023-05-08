@@ -128,6 +128,7 @@ const useStyles = createStyles((theme: MantineTheme) => ({
 
 export default function ChatDisplay({ message }: { message: Message }) {
   const { classes, cx } = useStyles();
+  // voices: getVoices
   const { voices, speaking, cancel, speak } = useSpeechSynthesis()
 
   const settings = useChatStore((state) => state.settingsForm)

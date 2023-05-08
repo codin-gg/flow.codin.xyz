@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-interface SpeechSynthesisArgs {
+interface SpeechSynthesisProps {
   onEnd?: () => void
 }
 
@@ -16,35 +16,31 @@ interface SpeakState {
 }
 
 interface SpeakArgs {
-  voice?: SpeechSynthesisVoice | null
+  voice?: SpeechSynthesisVoice
   text?: string
   rate?: number
   pitch?: number
   volume?: number
 }
 
-export const useSpeechSynthesis = ({ onEnd = Function.prototype }: SpeechSynthesisArgs = {}) => {
+export const useSpeechSynthesis = ({ onEnd = () => {} }: SpeechSynthesisProps = {}) => {
   const [voicesState, setVoicesState] = useState<VoicesState>({ voices: [], supported: false, cancel: () => {} })
   const [speakState, setSpeakState] = useState<SpeakState>({ speaking: false, cancel: () => {} })
 
-  const processVoices = (voiceOptions: SpeechSynthesisVoice[]) => {
+  const addVoices = (voiceOptions: SpeechSynthesisVoice[]) => {
     setVoicesState((prevState) => ({ ...prevState, voices: voiceOptions }))
   }
 
   const getVoices = () => {
-    // Firefox seems to have voices upfront and never calls the voiceschanged event
-    let voiceOptions = window.speechSynthesis.getVoices()
-    if (voiceOptions.length > 0) {
-      processVoices(voiceOptions)
-      setVoicesState((prevState) => ({ ...prevState, supported: true }))
-      return
-    }
+    const voices = window.speechSynthesis.getVoices()
 
-    // why not use .addEventListener voicechanged instead?
-    window.speechSynthesis.onvoiceschanged = (event) => {
-      voiceOptions = event?.target?.getVoices() as SpeechSynthesisVoice[]
-      processVoices(voiceOptions)
-      setVoicesState((prevState) => ({ ...prevState, supported: true }))
+    window.speechSynthesis.addEventListener('voiceschanged', (event: Event) => {
+      addVoices((event.target as SpeechSynthesis).getVoices())
+    })
+
+    if (voices.length > 0) {
+      addVoices(voices)
+      return
     }
   }
 
@@ -63,24 +59,26 @@ export const useSpeechSynthesis = ({ onEnd = Function.prototype }: SpeechSynthes
     }
   }, [])
 
-  const speak = (args: SpeakArgs = {}) => {
-    const { voice = null, text = '', rate = 1, pitch = 1, volume = 1 } = args
+  const speak = ({ text = '', voice, rate = 1, pitch = 1, volume = 1 }: SpeakArgs = {}) => {
     if (!voicesState.supported) return
-    setSpeakState({ speaking: true, cancel })
+
     // Firefox won't repeat an utterance that has been
     // spoken, so we need to create a new instance each time
     const utterance = new SpeechSynthesisUtterance()
     utterance.text = text
-    utterance.voice = voice
+    utterance.voice = voice ?? voicesState.voices[0]
     utterance.onend = handleEnd
     utterance.rate = rate
     utterance.pitch = pitch
     utterance.volume = volume
     window.speechSynthesis.speak(utterance)
-    const cancel = () => {
-      setSpeakState((prevState) => ({ ...prevState, speaking: false }))
-      window.speechSynthesis.cancel()
-    }
+    setSpeakState({
+      speaking: true,
+      cancel(){
+        setSpeakState((prevState) => ({ ...prevState, speaking: false }))
+        window.speechSynthesis.cancel()
+      }
+    })
   }
 
   return {

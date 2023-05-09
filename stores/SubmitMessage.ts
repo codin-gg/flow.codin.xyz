@@ -16,7 +16,7 @@ export const abortCurrentRequest = () => {
     apiState: "idle",
     currentAbortController: undefined,
   }));
-};
+}
 
 export const submitMessage = async (message: Message) => {
   // If message is empty, do nothing
@@ -27,6 +27,7 @@ export const submitMessage = async (message: Message) => {
 
   const activeChatId = get().activeChatId;
   const chat = get().chats.find((c) => c.id === activeChatId!);
+
   if (chat === undefined) {
     console.error("Chat not found");
     return;
@@ -35,6 +36,7 @@ export const submitMessage = async (message: Message) => {
 
   // If this is an existing message, remove all the messages after it
   const index = chat.messages.findIndex((m) => m.id === message.id);
+
   if (index !== -1) {
     set((state) => ({
       chats: state.chats.map((c) => {
@@ -175,12 +177,8 @@ export const submitMessage = async (message: Message) => {
         content: `Describe the following conversation snippet in 3 words or less.
               >>>
               Hello
-              ${chat.messages
-                .slice(1)
-                .map((m) => m.content)
-                .join("\n")}
-              >>>
-                `,
+              ${chat.messages.slice(1).map((m) => m.content).join("\n")}
+              >>>`,
         role: "system",
       } as Message;
 
@@ -209,4 +207,4 @@ export const submitMessage = async (message: Message) => {
       );
     }
   };
-};
+}

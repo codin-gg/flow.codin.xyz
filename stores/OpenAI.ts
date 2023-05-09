@@ -28,43 +28,25 @@ export async function fetchModels(key: string): Promise<string[]> {
   }
 }
 
-export async function _streamCompletion(
-  payload: string,
-  apiKey: string,
-  abortController?: AbortController,
-  callback?: ((res: IncomingMessage) => void) | undefined,
-  errorCallback?: ((res: IncomingMessage, body: string) => void) | undefined
-) {
-  const req = request(
-    {
-      hostname: 'api.openai.com',
-      port: 443,
-      path: '/v1/chat/completions',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${apiKey}`,
-      },
-      signal: abortController?.signal,
-    },
-    (res) => {
-      if (res.statusCode !== 200) {
-        let errorBody = '';
-        res.on('data', (chunk) => {
-          errorBody += chunk;
-        });
-        res.on('end', () => {
-          errorCallback?.(res, errorBody);
-        });
-        return;
-      }
-      callback?.(res);
+export async function _streamCompletion(payload: string, apiKey: string, abortController?: AbortController, callback?: ((res: IncomingMessage) => void) | undefined, errorCallback?: ((res: IncomingMessage, body: string) => void) | undefined) {
+  const req = request({
+    hostname: 'api.openai.com',
+    port: 443,
+    path: '/v1/chat/completions',
+    method: 'POST',
+    signal: abortController?.signal,
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}`, /*'Content-Length': payload.length*/ }
+  }, (res) => {
+    if (res.statusCode !== 200) {
+      let errorBody = ''
+      res.on('data', (chunk) => { errorBody += chunk })
+      res.on('end', () => { errorCallback?.(res, errorBody) })
+      return
     }
-  );
-
-  req.write(payload);
-
-  req.end();
+    callback?.(res)
+  })
+  req.write(payload)
+  req.end()
 }
 
 interface ChatCompletionParams {
@@ -91,39 +73,13 @@ const paramKeys = [
   'logit_bias',
 ];
 
-export async function streamCompletion(
-  messages: Message[],
-  params: ChatCompletionParams,
-  apiKey: string,
-  abortController?: AbortController,
-  callback?: ((res: IncomingMessage) => void) | undefined,
-  endCallback?: ((tokensUsed: number) => void) | undefined,
-  errorCallback?: ((res: IncomingMessage, body: string) => void) | undefined
-) {
-  const modelInfo = getModelInfo(params.model);
+export async function streamCompletion(messages: Message[], params: ChatCompletionParams, apiKey: string, abortController?: AbortController, callback?: ((res: IncomingMessage) => void) | undefined, endCallback?: ((tokensUsed: number) => void) | undefined, errorCallback?: ((res: IncomingMessage, body: string) => void) | undefined) {
+  const modelInfo = getModelInfo(params.model)
+  const submitMessages = truncateMessages(messages, modelInfo.maxTokens, params.max_tokens)
+  const submitParams = Object.fromEntries(Object.entries(params).filter(([key]) => paramKeys.includes(key)))
 
-  const submitMessages = truncateMessages(
-    messages,
-    modelInfo.maxTokens,
-    params.max_tokens
-  );
-
-  const submitParams = Object.fromEntries(
-    Object.entries(params).filter(([key]) => paramKeys.includes(key))
-  );
-
-  const payload = JSON.stringify({
-    messages: submitMessages.map(({ role, content }) => ({ role, content })),
-    stream: true,
-    ...{
-      ...submitParams,
-      logit_bias: JSON.parse(params.logit_bias || "{}"),
-      // 0 == unlimited
-      max_tokens: params.max_tokens || undefined,
-    },
-  });
-
-  let buffer = "";
+  const payload = JSON.stringify({messages: submitMessages.map(({ role, content }) => ({ role, content })), stream: true, ...{...submitParams, logit_bias: JSON.parse(params.logit_bias || "{}"), max_tokens: params.max_tokens || undefined }})
+  let buffer = ""
 
   const successCallback = (res: IncomingMessage) => {
     res.on("data", (chunk) => {
@@ -162,13 +118,10 @@ export async function streamCompletion(
     });
 
     res.on("end", () => {
-      const tokensUsed =
-        countTokens(submitMessages.map((m) => m.content).join("\n")) +
-        countTokens(buffer);
-
-      endCallback?.(tokensUsed);
-    });
-  };
+      const tokensUsed = countTokens(submitMessages.map((m) => m.content).join("\n")) + countTokens(buffer)
+      endCallback?.(tokensUsed)
+    })
+  }
 
   return _streamCompletion(payload, apiKey, abortController, successCallback, errorCallback) // this could be an stream/event-emitter or a generator 🤔
 }

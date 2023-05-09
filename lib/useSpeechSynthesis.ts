@@ -8,9 +8,7 @@ interface SpeakArgs {
   volume?: number
 }
 
-export const useSpeechSynthesis = ({ onEnd = () => {
-  console.log('----------------------- useSpeechSynthesis [on:END] -----------------------')
-}} = {}) => {
+export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [speaking, setSpeaking] = useState(false)
   const [supported, setSupported] = useState(false)
@@ -31,7 +29,7 @@ export const useSpeechSynthesis = ({ onEnd = () => {
   }
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.speechSynthesis) {
+    if (window.speechSynthesis) {
       setSupported(true)
       getVoices()
     }

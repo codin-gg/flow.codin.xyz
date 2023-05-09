@@ -6,9 +6,10 @@ interface SpeakArgs {
   rate?: number
   pitch?: number
   volume?: number
+  onEnd?: (event: SpeechSynthesisEvent) => void
 }
 
-export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
+export const useSpeechSynthesis = ({ onEnd = (event: SpeechSynthesisEvent) => {}} = {}) => {
   const [voices, setVoices] = useState<SpeechSynthesisVoice[]>([])
   const [speaking, setSpeaking] = useState(false)
   const [supported, setSupported] = useState(false)
@@ -22,10 +23,10 @@ export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
     setVoices(window.speechSynthesis.getVoices())
   }
 
-  const handleEnd = () => {
+  const handleEnd = (event: SpeechSynthesisEvent) => {
     setSpeaking(false)
     setHighlight(undefined)
-    onEnd()
+    onEnd(event)
   }
 
   useEffect(() => {
@@ -44,7 +45,7 @@ export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
     const utterance = new window.SpeechSynthesisUtterance()
     utterance.text = text
     utterance.voice = voice
-    utterance.onend = handleEnd
+    // utterance.onend = handleEnd
     utterance.rate = rate
     utterance.pitch = pitch
     utterance.volume = volume
@@ -55,6 +56,7 @@ export const useSpeechSynthesis = ({ onEnd = () => {}} = {}) => {
     })
     utterance.addEventListener('end', (event: SpeechSynthesisEvent) => {
       console.log('end', event)
+      handleEnd(event)
       // !!! fixme: there could be something else to play
     })
     utterance.addEventListener('error', (event: SpeechSynthesisErrorEvent) => { console.log('error', event)})

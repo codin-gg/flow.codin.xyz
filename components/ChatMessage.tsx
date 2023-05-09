@@ -125,7 +125,25 @@ const useStyles = createStyles((theme: MantineTheme) => ({
 
 export default function ChatDisplay({ message }: { message: Message }) {
   const { classes, cx } = useStyles()
-  const { voices /* constant.voices*/ , speaking, highlight, cancel, speak } = useSpeechSynthesis()
+  const { voices /* constant.voices*/ , speaking, highlight, cancel, speak } = useSpeechSynthesis({
+    onEnd (event : SpeechSynthesisEvent) {
+      console.log('this is the speech callback and we have the event; it would be interesting to see if the message.content is now longer than event.charIndex + event.charLength; if so, speaking should simply continue')
+      console.log(message)
+      console.log(message.loading, message.content.length, event.utterance.text.length)
+      if (message.content.length > event.utterance.text.length) {
+        console.log('RECYCLE------------------')
+        speak({
+          // this can't be the entire message, because part of the message has already been read out loud
+          text: `${' '.repeat(event.utterance.text.length)}${message.content.slice(event.utterance.text.length)}`,
+          // voice, and other settings should be the same as the original message
+          voice: voices.find(({voiceURI}) => voiceURI === settings.voice) as SpeechSynthesisVoice || undefined,
+          rate: settings.voiceRate || defaultSettings.voiceRate,
+          pitch: settings.voicePitch || defaultSettings.voicePitch,
+          volume: settings.voiceVolume || defaultSettings.voiceVolume,
+        })
+      }
+    }
+  })
 
   const settings = useChatStore((state) => state.settingsForm)
   const defaultSettings = useChatStore((state) => state.defaultSettings)
@@ -161,7 +179,7 @@ export default function ChatDisplay({ message }: { message: Message }) {
             <ActionIcon className={ cx(classes.actionIcon, classes.topOfMessage) } onClick={ () => handleMainAction(message) } color="gray">
               {message.role === "assistant" ? <IconRepeat /> : <IconEdit />}
             </ActionIcon>
-            <ActionIcon className={ cx(classes.actionIcon, classes.topOfMessage) } onClick={ () => handleDeleteMessage(message) } color="gray">
+            <ActionIcon className={ cx(classes.actionIcon, classes.topOfMessage) } onClick={ () => { handleDeleteMessage(message); cancel() }} color="gray">
               <IconX />
             </ActionIcon>
             <Reader>
